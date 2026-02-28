@@ -11,17 +11,38 @@
 
     <style>
         body {
-            font-family: "Microsoft JhengHei", sans-serif;
-            max-width: 800px;
+            font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
+            max-width: 1000px;
             margin: 40px auto;
             background-color: #f4f7f6;
+            transition: all 0.3s;
         }
 
+        /* Responsive 2-Column Layout */
         .card {
             background: white;
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 25px;
+            align-items: start;
+        }
+
+        @media (max-width: 850px) {
+            .card {
+                grid-template-columns: 1fr;
+            }
+
+            body {
+                margin: 20px;
+            }
+        }
+
+        .quest-panel h1 {
+            margin-top: 0;
+            font-size: 24px;
         }
 
         .quest {
@@ -29,7 +50,52 @@
             padding: 15px;
             border-left: 5px solid #3498db;
             margin-bottom: 20px;
-            font-size: 18px;
+            font-size: 17px;
+            line-height: 1.6;
+        }
+
+        /* Embed Mode Adjustments */
+        body.embed-mode {
+            margin: 0 !important;
+            max-width: 100% !important;
+            background: white;
+        }
+
+        body.embed-mode .back-link,
+        body.embed-mode .quest-panel h1 {
+            display: none;
+        }
+
+        body.embed-mode .card {
+            box-shadow: none;
+            border-radius: 0;
+            padding: 10px;
+            gap: 15px;
+            height: 380px;
+            /* Fit in 400px container */
+            overflow: hidden;
+        }
+
+        body.embed-mode .quest {
+            font-size: 14px;
+            padding: 10px;
+        }
+
+        body.embed-mode .CodeMirror {
+            height: 240px !important;
+            /* Shorter for embed */
+            font-size: 16px;
+            /* Slightly smaller for embed */
+        }
+
+        body.embed-mode .CodeMirror-gutters {
+            left: 0 !important;
+        }
+
+        body.embed-mode button {
+            padding: 10px;
+            font-size: 16px;
+            margin-top: 10px;
         }
 
         .CodeMirror {
@@ -38,7 +104,9 @@
             font-size: 18px;
             height: 500px;
             /* Approximately 25 lines */
+            width: 100%;
         }
+
 
         button {
             background: #27ae60;
@@ -105,24 +173,136 @@
     <a href="index.html" class="back-link">← 回到主頁面</a>
 
     <div class="card">
-        <h1>{{ ex.title }}</h1>
-        <div class="quest">{{ ex.quest_html | safe }}</div>
-
-        <textarea id="python-code">{{ ex.starter_code }}</textarea>
-
-        <button onclick="checkCode()">✅ 檢查我的答案</button>
-
-        <div style="margin-top: 10px; font-size: 14px; color: #666; text-align: center;">
-            ⚠️ 如果程式執行過久（例如跑了無限迴圈），請關掉分頁再重開。
+        <div class="quest-panel">
+            <h1>{{ ex.title }}</h1>
+            <div class="quest">{{ ex.quest_html | safe }}</div>
         </div>
 
-        <div id="result"></div>
+        <div class="code-panel">
+            <textarea id="python-code">{{ ex.starter_code }}</textarea>
+
+            <button onclick="checkCode()">✅ 檢查我的答案</button>
+
+            <div style="margin-top: 10px; font-size: 13px; color: #666; text-align: center;">
+                ⚠️ 如果程式執行過久（不小心寫了無限迴圈），請重新整理網頁。
+            </div>
+
+            <div id="result"></div>
+        </div>
     </div>
 
     <script id="test-code" type="application/json">{{ test_code_json | safe }}</script>
     <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
 
     <script>
+        class CodeSnippet extends HTMLElement {
+            constructor() {
+                super();
+                this.attachShadow({ mode: 'open' });
+            }
+
+            connectedCallback() {
+                // Grab the text inside the tag before we overwrite the innerHTML
+                const codeText = this.innerHTML.trim();
+                this.render(codeText);
+            }
+
+            render(content) {
+                this.shadowRoot.innerHTML = `
+        <style>
+            :host { 
+                display: block; 
+                margin: 1.5rem 0; 
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            }
+            .wrapper {
+                position: relative;
+                background: #1e1e1e;
+                color: #d4d4d4;
+                padding: 1.2rem;
+                border-radius: 8px;
+                border: 1px solid #333;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            }
+            pre { 
+                margin: 0; 
+                white-space: pre-wrap; 
+                word-break: break-all; 
+                font-family: 'Consolas', 'Monaco', monospace;
+                font-size: 14px; 
+                line-height: 1.5;
+            }
+            .copy-btn {
+                position: absolute; 
+                top: 8px; 
+                right: 8px;
+                background: #333; 
+                border: 1px solid #444; 
+                color: #ececec;
+                padding: 4px 10px; 
+                border-radius: 4px; 
+                cursor: pointer;
+                font-size: 11px;
+                font-weight: bold;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                transition: all 0.2s ease;
+                min-width: 60px; /* Prevents button jumping when text changes */
+                text-align: center;
+            }
+            .copy-btn:hover { 
+                background: #444; 
+                border-color: #666;
+            }
+            .copy-btn.success { 
+                background: #059669; 
+                color: white; 
+                border-color: #059669;
+            }
+        </style>
+        
+        <div class="wrapper">
+            <button class="copy-btn">Copy</button>
+            <pre>${content}</pre>
+        </div>
+        `;
+
+                this.setupLogic();
+            }
+
+            setupLogic() {
+                const btn = this.shadowRoot.querySelector('.copy-btn');
+                const code = this.shadowRoot.querySelector('pre').innerText;
+
+                btn.addEventListener('click', () => {
+                    navigator.clipboard.writeText(code).then(() => {
+                        // UI Feedback
+                        btn.innerText = 'Copied!';
+                        btn.classList.add('success');
+
+                        // Revert after 2 seconds
+                        setTimeout(() => {
+                            btn.innerText = 'Copy';
+                            btn.classList.remove('success');
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('Failed to copy: ', err);
+                        btn.innerText = 'Error';
+                    });
+                });
+            }
+        }
+
+        // Register the custom tag
+        customElements.define('code-snippet', CodeSnippet);
+    </script>
+
+    <script>
+        // Check for embed mode
+        if (new URLSearchParams(window.location.search).get('embed') === 'true') {
+            document.body.classList.add('embed-mode');
+        }
+
         var editor = CodeMirror.fromTextArea(document.getElementById("python-code"), {
             mode: "python", lineNumbers: true, indentUnit: 4
         });

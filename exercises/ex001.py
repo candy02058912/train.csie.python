@@ -1,19 +1,25 @@
 """
-title: 練習題：計算平方
-quest_html: 請完成函式 <code>square(n)</code>，讓它回傳數字的平方值。
+title: 練習題 001 - Hello World!
+quest_html: 請在下方印出 <code>Hello World!</code> 字樣：<code-snippet>Hello World!</code-snippet>
 """
 
 # ==== STARTER CODE ====
-def square(n):
-    # 在這裡寫你的程式碼
-    return n * n
+# 請更改下方程式碼，讓輸出結果為 "Hello World!"
+print("Hi! I'm Candy!")
 
 # ==== TEST CODE ====
+import sys
+
 def run_tests():
     try:
-        assert square(5) == 25, f"Expected square(5) to be 25, but got {square(5)}"
-        assert square(0) == 0, f"Expected square(0) to be 0, but got {square(0)}"
-        return "SUCCESS"
+        # Since sys.stdout is replaced by CaptureOutput in the template, 
+        # we can get the current value to check what was printed.
+        output = sys.stdout.get_value().strip()
+        expected = "Hello World!"
+        
+        if output == expected:
+            return "SUCCESS"
+        else:
+            return f"你的輸出為 \"{output}\"，但預期應該要是 \"{expected}\""
     except Exception as e:
-        return f"Error: {str(e)}"
-run_tests()
+        return str(e)
