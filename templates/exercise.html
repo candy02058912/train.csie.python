@@ -6,7 +6,6 @@
     <title>Python 學習進度繳交 - {{ ex.title }}</title>
     <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/neo.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
 
@@ -37,8 +36,7 @@
             border: 2px solid #ddd;
             border-radius: 8px;
             font-size: 18px;
-            height: auto;
-            min-height: 200px;
+            height: 500px; /* Approximately 25 lines */
         }
 
         button {
@@ -125,7 +123,7 @@
 
     <script>
         var editor = CodeMirror.fromTextArea(document.getElementById("python-code"), {
-            mode: "python", theme: "neo", lineNumbers: true, indentUnit: 4
+            mode: "python", lineNumbers: true, indentUnit: 4
         });
 
         let pyodideInstance = null;
