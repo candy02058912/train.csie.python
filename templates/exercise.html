@@ -59,6 +59,9 @@
             margin: 0 !important;
             max-width: 100% !important;
             background: white;
+            overflow: hidden;
+            /* Prevent outer scrollbar */
+            height: 100vh;
         }
 
         body.embed-mode .back-link,
@@ -70,10 +73,13 @@
             box-shadow: none;
             border-radius: 0;
             padding: 10px;
+            padding-bottom: 60px;
+            /* Extra space to prevent getting stuck at bottom */
             gap: 15px;
-            height: 380px;
-            /* Fit in 400px container */
-            overflow: hidden;
+            height: 100vh;
+            overflow-y: auto;
+            grid-template-columns: 1fr 1.2fr;
+            box-sizing: border-box;
         }
 
         body.embed-mode .quest {
@@ -400,6 +406,9 @@ _run_student_code()
                     resultDiv.className = "fail";
                     resultDiv.innerHTML = `🚨 <strong>程式執行發生錯誤：</strong><br><pre style="white-space: pre-wrap; font-size: 14px; background: #fff; padding: 10px; border-radius: 4px;">${result.message}</pre> ${formatOutputSnippet(result.output)}`;
                 }
+
+                // Scroll result into view without aggressive jumping
+                resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
             } catch (err) {
                 // Catch any unexpected syntax or JS/Pyodide crashes that would otherwise silently hang the UI
