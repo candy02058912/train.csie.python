@@ -36,7 +36,8 @@
             border: 2px solid #ddd;
             border-radius: 8px;
             font-size: 18px;
-            height: 500px; /* Approximately 25 lines */
+            height: 500px;
+            /* Approximately 25 lines */
         }
 
         button {
@@ -209,7 +210,7 @@ _run_student_code()
                         <input type="text" id="stuID" placeholder="請輸入學號" style="width: 100%; margin-bottom: 10px;"><br>
                         <label>姓名：</label><br>
                         <input type="text" id="stuName" placeholder="請輸入姓名" style="width: 100%;"><br>
-                        <button onclick="sendData()" style="width:100%; padding:10px; background:#3498db; margin-top:15px; color: white; border: none; cursor: pointer;">傳送成績</button>
+                        <button onclick="sendData()" style="width:100%; padding:10px; background:#3498db; margin-top:15px; color: white; border: none; cursor: pointer;">登記成績</button>
                     </div>
                 `;
                 } else if (result.status === "FAILURE") {
