@@ -307,6 +307,11 @@
         // Check for embed mode
         if (new URLSearchParams(window.location.search).get('embed') === 'true') {
             document.body.classList.add('embed-mode');
+            
+            // Re-calculate size after the frame is fully loaded
+            window.addEventListener('load', () => {
+                setTimeout(() => editor.refresh(), 200);
+            });
         }
 
         var editor = CodeMirror.fromTextArea(document.getElementById("python-code"), {
