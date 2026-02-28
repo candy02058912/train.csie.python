@@ -30,7 +30,11 @@ jobs:
         with:
           python-version: '3.12'
       - name: Build Index
-        run: python3 build.py
+        env:
+          GAS_URL: ${{ secrets.GAS_URL }}
+        run: |
+          pip install jinja2 python-dotenv
+          python3 build.py
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact

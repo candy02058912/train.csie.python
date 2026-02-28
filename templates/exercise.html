@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Python 學習進度繳交 - {{ ex.title }}</title>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/neo.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
+
+    <style>
+        body {
+            font-family: "Microsoft JhengHei", sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            background-color: #f4f7f6;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .quest {
+            background: #e8f4fd;
+            padding: 15px;
+            border-left: 5px solid #3498db;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .CodeMirror {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 18px;
+            height: auto;
+            min-height: 200px;
+        }
+
+        button {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        #result {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 8px;
+            display: none;
+            font-size: 18px;
+        }
+
+        .pass {
+            background: #d4edda;
+            border: 2px solid #c3e6cb;
+        }
+
+        .fail {
+            background: #f8d7da;
+            border: 2px solid #f5c6cb;
+        }
+
+        .submit-area {
+            margin-top: 15px;
+            padding: 15px;
+            border-top: 1px dashed #ccc;
+            text-align: center;
+        }
+
+        input[type="text"] {
+            font-size: 18px;
+            padding: 10px;
+            width: 60%;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #3498db;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <a href="index.html" class="back-link">← 回到主頁面</a>
+
+    <div class="card">
+        <h1>{{ ex.title }}</h1>
+        <div class="quest">{{ ex.quest_html | safe }}</div>
+
+        <textarea id="python-code">{{ ex.starter_code }}</textarea>
+
+        <button onclick="checkCode()">✅ 檢查我的答案</button>
+
+        <div id="result"></div>
+    </div>
+
+    <script id="test-code" type="application/json">{{ test_code_json | safe }}</script>
+    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+
+    <script>
+        var editor = CodeMirror.fromTextArea(document.getElementById("python-code"), {
+            mode: "python", theme: "neo", lineNumbers: true, indentUnit: 4
+        });
+
+        let pyodideInstance = null;
+
+        async function checkCode() {
+            const resultDiv = document.getElementById("result");
+            resultDiv.style.display = "block";
+            resultDiv.className = "";
+            resultDiv.innerHTML = "正在計算中...";
+
+            try {
+                if (!pyodideInstance) pyodideInstance = await loadPyodide();
+                const studentCode = editor.getValue();
+
+                // Pass the Python test code safely using Jinja2 JSON serialization
+                const testCode = JSON.parse(document.getElementById("test-code").textContent);
+
+                pyodideInstance.globals.set("studentCode", studentCode);
+                pyodideInstance.globals.set("testCode", testCode);
+
+                const executePythonScript = `
+import sys
+import json
+import traceback
+
+class CaptureOutput:
+    def __init__(self):
+        self.text = []
+    def write(self, string):
+        self.text.append(string)
+    def flush(self):
+        pass
+    def get_value(self):
+        return ''.join(self.text)
+
+def _run_student_code():
+    old_stdout = sys.stdout
+    old_stderr = sys.stderr
+    sys.stdout = CaptureOutput()
+    sys.stderr = CaptureOutput()
+    
+    result = {"status": "SUCCESS", "message": "", "output": ""}
+    
+    try:
+        # Evaluate student code then test asserts in the global context
+        exec(studentCode, globals())
+        exec(testCode, globals())
+        test_result = run_tests()
+        if test_result != "SUCCESS":
+            result["status"] = "FAILURE"
+            result["message"] = test_result
+    except Exception as e:
+        result["status"] = "ERROR"
+        result["message"] = traceback.format_exc()
+        
+    result["output"] = sys.stdout.get_value() + sys.stderr.get_value()
+    
+    sys.stdout = old_stdout
+    sys.stderr = old_stderr
+    return json.dumps(result)
+
+_run_student_code()
+`;
+
+                const outputJson = await pyodideInstance.runPythonAsync(executePythonScript);
+                const result = JSON.parse(outputJson);
+
+                // Output formatting function
+                const formatOutputSnippet = (outStr) => {
+                    if (!outStr || outStr.trim() === "") return "";
+                    const escapedOut = outStr.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                    return `<div style="margin-top: 15px; padding: 10px; background: #fdfdfd; border-left: 4px solid #999; border-radius: 4px; font-family: monospace; font-size: 14px; white-space: pre-wrap;"><strong>輸出：</strong><br>${escapedOut}</div>`;
+                };
+
+                if (result.status === "SUCCESS") {
+                    resultDiv.className = "pass";
+                    resultDiv.innerHTML = `
+                    🎊 <strong>太棒了！挑戰成功！</strong>
+                    ${formatOutputSnippet(result.output)}
+                    <div class="submit-area" style="text-align: left; max-width: 300px; margin: 0 auto; margin-top: 15px;">
+                        <p style="text-align: center;">請填寫資料以登記成績：</p>
+                        <label>學號：</label><br>
+                        <input type="text" id="stuID" placeholder="請輸入學號" style="width: 100%; margin-bottom: 10px;"><br>
+                        <label>姓名：</label><br>
+                        <input type="text" id="stuName" placeholder="請輸入姓名" style="width: 100%;"><br>
+                        <button onclick="sendData()" style="width:100%; padding:10px; background:#3498db; margin-top:15px; color: white; border: none; cursor: pointer;">傳送成績</button>
+                    </div>
+                `;
+                } else if (result.status === "FAILURE") {
+                    resultDiv.className = "fail";
+                    resultDiv.innerHTML = `💡 <strong>答案不正確：</strong><br> ${result.message} ${formatOutputSnippet(result.output)}`;
+                } else {
+                    resultDiv.className = "fail";
+                    resultDiv.innerHTML = `🚨 <strong>程式執行發生錯誤：</strong><br><pre style="white-space: pre-wrap; font-size: 14px; background: #fff; padding: 10px; border-radius: 4px;">${result.message}</pre> ${formatOutputSnippet(result.output)}`;
+                }
+
+            } catch (err) {
+                // Catch any unexpected syntax or JS/Pyodide crashes that would otherwise silently hang the UI
+                resultDiv.className = "fail";
+                resultDiv.innerHTML = `🚨 <strong>測試環境發生嚴重錯誤（可能為語法錯誤）：</strong><br><pre style="white-space: pre-wrap; font-size: 14px; background: #fff; padding: 10px; border-radius: 4px;">${err.message}</pre>`;
+            }
+        }
+
+        async function sendData() {
+            const id = document.getElementById("stuID").value;
+            const name = document.getElementById("stuName").value;
+            const exerciseNum = "{{ ex.id }}";
+
+            if (!id || !name) {
+                alert("請完整填寫學號與姓名喔！");
+                return;
+            }
+
+            const btn = document.querySelector(".submit-area button");
+            const originalBtnText = btn.innerText;
+
+            btn.disabled = true;
+            btn.innerText = "正在傳送中...";
+            btn.style.backgroundColor = "#ccc";
+
+            const gasURL = "{{ gas_url }}";
+
+            try {
+                // 改用 GET 請求以避開 CORS 限制
+                const queryParams = new URLSearchParams({
+                    stuID: id,
+                    stuName: name,
+                    exID: exerciseNum
+                });
+
+                const response = await fetch(`${gasURL}?${queryParams.toString()}`, {
+                    method: 'GET',
+                    mode: 'cors'
+                });
+
+                if (!response.ok) throw new Error("網路連線異常 (" + response.status + ")");
+
+                const result = await response.json();
+
+                if (result.status === "success") {
+                    alert(name + " 同學，第 " + exerciseNum + " 題的成績已成功傳送！");
+                    document.querySelector(".submit-area").innerHTML = "✅ 成績已成功登記在表單中。";
+                } else {
+                    let errorMsg = "傳送失敗：";
+                    if (result.code === 400) errorMsg += "欄位資料不正確 (400)，請檢查學號姓名格式。";
+                    else errorMsg += (result.message || "Google 表單拒絕接收資料");
+                    throw new Error(errorMsg);
+                }
+
+            } catch (err) {
+                console.error("Submission Error:", err);
+                btn.disabled = false;
+                btn.innerText = originalBtnText;
+                btn.style.backgroundColor = "#3498db";
+                alert("⚠️ " + err.message + "\n請確認資料正確性與網路連線。");
+            }
+        }
+    </script>
+
+</body>
+
+</html>
