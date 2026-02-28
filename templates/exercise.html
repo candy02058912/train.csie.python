@@ -187,7 +187,7 @@
         <div class="code-panel">
             <textarea id="python-code">{{ ex.starter_code }}</textarea>
 
-            <button onclick="checkCode()">✅ 檢查我的答案</button>
+            <button onclick="checkCode()">🏃‍♀️‍➡️ 跑看看 🏃‍♀️</button>
 
             <div style="margin-top: 10px; font-size: 13px; color: #666; text-align: center;">
                 ⚠️ 如果程式執行過久（不小心寫了無限迴圈），請重新整理網頁。
@@ -311,7 +311,7 @@
         // Check for embed mode
         if (new URLSearchParams(window.location.search).get('embed') === 'true') {
             document.body.classList.add('embed-mode');
-            
+
             // Re-calculate size after the frame is fully loaded
             window.addEventListener('load', () => {
                 setTimeout(() => editor.refresh(), 200);
@@ -328,7 +328,7 @@
             const resultDiv = document.getElementById("result");
             resultDiv.style.display = "block";
             resultDiv.className = "";
-            resultDiv.innerHTML = "正在計算中...";
+            resultDiv.innerHTML = "努力跑跑中...";
 
             try {
                 if (!pyodideInstance) pyodideInstance = await loadPyodide();
@@ -391,7 +391,7 @@ _run_student_code()
                 const formatOutputSnippet = (outStr) => {
                     if (!outStr || outStr.trim() === "") return "";
                     const escapedOut = outStr.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-                    return `<div style="margin-top: 15px; padding: 10px; background: #fdfdfd; border-left: 4px solid #999; border-radius: 4px; font-family: monospace; font-size: 14px; white-space: pre-wrap;"><strong>輸出：</strong><br>${escapedOut}</div>`;
+                    return `<div style="margin-top: 15px; padding: 10px; background: #fdfdfd; border-left: 4px solid #999; border-radius: 4px; font-family: monospace; font-size: 14px; white-space: pre-wrap;"><strong>Console 輸出：</strong><br>${escapedOut}</div>`;
                 };
 
                 if (result.status === "SUCCESS") {
@@ -410,7 +410,7 @@ _run_student_code()
                 `;
                 } else if (result.status === "FAILURE") {
                     resultDiv.className = "fail";
-                    resultDiv.innerHTML = `💡 <strong>答案不正確：</strong><br> ${result.message} ${formatOutputSnippet(result.output)}`;
+                    resultDiv.innerHTML = `💡 <strong>答案不正確：</strong><br> <div style="white-space: pre-wrap; font-size: 14px; background: #fff; padding: 10px; border-radius: 4px; margin-top: 5px;">${result.message}</div> ${formatOutputSnippet(result.output)}`;
                 } else {
                     resultDiv.className = "fail";
                     resultDiv.innerHTML = `🚨 <strong>程式執行發生錯誤：</strong><br><pre style="white-space: pre-wrap; font-size: 14px; background: #fff; padding: 10px; border-radius: 4px;">${result.message}</pre> ${formatOutputSnippet(result.output)}`;
