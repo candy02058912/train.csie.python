@@ -13,8 +13,9 @@
     <style>
         body {
             font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
-            max-width: 1000px;
-            margin: 40px auto;
+            max-width: 1600px;
+            width: 95%;
+            margin: 20px auto;
             background-color: #f4f7f6;
             transition: all 0.3s;
         }
@@ -26,9 +27,11 @@
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             display: grid;
-            grid-template-columns: 1fr 1.5fr;
-            gap: 25px;
+            grid-template-columns: 1fr 1.8fr;
+            gap: 30px;
             align-items: start;
+            min-height: calc(100vh - 40px);
+            box-sizing: border-box;
         }
 
         @media (max-width: 850px) {
@@ -114,8 +117,8 @@
             border: 2px solid #ddd;
             border-radius: 8px;
             font-size: 18px;
-            height: 500px;
-            /* Approximately 25 lines */
+            height: calc(100vh - 250px);
+            min-height: 400px;
             width: 100%;
         }
 
