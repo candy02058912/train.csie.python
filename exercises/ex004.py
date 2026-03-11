@@ -23,6 +23,6 @@ def run_tests():
         if output == expected:
             return "SUCCESS"
         else:
-            return f"❌ 程式好像沒有正確印出預期的文字喔。\n你的輸出：\n{output}"
+            return f"❌ 程式好像沒有正確印出預期的文字喔。\n[預期應該是]：\n{expected}\n\n[你的輸出是]：\n{output}"
     except Exception as e:
         return str(e)
