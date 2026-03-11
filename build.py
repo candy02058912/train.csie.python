@@ -21,9 +21,11 @@ def load_exercises():
         # Parse metadata from top-level docstring
         title_match = re.search(r"title:\s*(.+)", content)
         quest_match = re.search(r"quest_html:\s*(.+)", content)
+        score_match = re.search(r"score:\s*(\d+)", content)
         
         title = title_match.group(1).strip() if title_match else f"Exercise {idx + 1}"
         quest_html = quest_match.group(1).strip() if quest_match else ""
+        score = int(score_match.group(1)) if score_match else 0
         
         # Split code sections
         parts = content.split("# ==== STARTER CODE ====")
@@ -40,6 +42,7 @@ def load_exercises():
         exercises.append({
             "id": id_str,
             "title": title,
+            "score": score,
             "quest_html": quest_html,
             "starter_code": starter_code,
             "test_code": test_code
@@ -81,8 +84,13 @@ def generate_html():
 
     # Render index.html
     index_template = env.get_template('index.html')
+    
+    exercises_map = {ex["id"]: {"id": ex["id"], "score": ex["score"]} for ex in exercises}
+    exercises_json = json.dumps(exercises_map)
+    
     index_html = index_template.render(
         exercises=exercises,
+        exercises_json=exercises_json,
         scripts=files,
         gas_url=gas_url
     )

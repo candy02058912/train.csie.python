@@ -1,5 +1,6 @@
 """
 title: 練習題 003：認識 Console（主控台）
+score: 1
 quest_html: 寫程式時，我們經常需要「看到」程式執行的過程或結果，這時候就會用到 <code>print()</code>。它會將括號內的內容顯示在下方的「Console」（主控台）區域。請嘗試在下方印出這兩行文字：<br><code>Python is cool!</code><br><code>I love coding.</code>
 """
 

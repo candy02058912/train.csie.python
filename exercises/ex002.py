@@ -1,5 +1,6 @@
 """
 title: 練習題 002：修好 Bug！
+score: 1
 quest_html: 哎呀！山姆受傷了，但是目前的程式碼好像有點問題。原本設定好的傷害值 <code>sword_damage</code> 似乎沒有正確扣除。請修改程式碼，讓最後印出的 <code>end_health</code> 能正確顯示山姆受傷後的剩餘血量。
 """
 

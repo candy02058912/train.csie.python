@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Python Scripts Repository</title>
+    <title>Candy 的 Python 課程資源</title>
     <style>
         :root {
             --bg-color: #0f172a;
@@ -165,9 +165,166 @@
 </head>
 
 <body>
-    <h1>🚀 Python Playground</h1>
+    <h1>🚀 Candy 的 Python 課程資源</h1>
 
-    <h2 class="section-title">✨ Interactive Exercises ✨</h2>
+    <h2 class="section-title">🔍 查詢練習繳交紀錄</h2>
+    <div class="card exercise-card"
+        style="max-width: 600px; width: 100%; margin: 0 auto; animation-delay: 0.2s; padding: 2rem;">
+
+        <div style="width: 100%; display: flex; flex-direction: column; gap: 1.2rem; position: relative; z-index: 2;">
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 200px;">
+                    <label
+                        style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--exercise-accent); font-weight: bold;">學號
+                        (Student ID)</label>
+                    <input type="text" id="stuID" placeholder="例如: 112001"
+                        style="box-sizing: border-box; width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(15, 23, 42, 0.6); color: white; outline: none; transition: 0.3s; font-family: inherit;">
+                </div>
+                <div style="flex: 1; min-width: 200px;">
+                    <label
+                        style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--exercise-accent); font-weight: bold;">姓名
+                        (Name)</label>
+                    <input type="text" id="stuName" placeholder="請輸入姓名"
+                        style="box-sizing: border-box; width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(15, 23, 42, 0.6); color: white; outline: none; transition: 0.3s; font-family: inherit;">
+                </div>
+            </div>
+            <button onclick="checkData()"
+                style="box-sizing: border-box; width: 100%; padding: 1rem; border-radius: 8px; border: none; background: var(--accent); color: var(--bg-color); font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 1rem; font-family: inherit;">
+                🚀 開始查詢
+            </button>
+        </div>
+
+        <div id="loader"
+            style="display: none; margin-top: 1.5rem; text-align: center; color: var(--accent); font-weight: bold; position: relative; z-index: 2;">
+            📡 正在連線至資料庫...
+        </div>
+
+        <div id="results"
+            style="display: none; width: 100%; margin-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.5rem; position: relative; z-index: 2;">
+            <h3 style="font-size: 1.1rem; color: var(--exercise-accent); margin-bottom: 1rem;">
+                尚未完成： <span id="count" style="color: var(--accent); font-size: 1.3rem;">{{ exercises|length }}</span>
+                題
+            </h3>
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 0.95rem;">
+                    <thead>
+                        <tr style="text-align: left; border-bottom: 2px solid var(--accent);">
+                            <th style="padding: 0.8rem; width: 20%; text-align: center;">題號</th>
+                            <th style="padding: 0.8rem; width: 15%; text-align: center;">比重</th>
+                            <th style="padding: 0.8rem; width: 25%;">狀態</th>
+                            <th style="padding: 0.8rem; width: 40%;">最後繳交時間</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script id="exercises-data" type="application/json">
+        {{ exercises_json|safe }}
+    </script>
+    <script>
+        async function checkData() {
+            const id = document.getElementById('stuID').value.trim();
+            const name = document.getElementById('stuName').value.trim();
+            const loader = document.getElementById('loader');
+            const results = document.getElementById('results');
+            const resBody = document.getElementById('resBody');
+
+            if (!id || !name) return alert("請輸入學號與姓名！");
+
+            loader.style.display = "block";
+            results.style.display = "none";
+
+            const webAppUrl = `https://script.google.com/macros/s/AKfycbx2VTtDp_dbuFycMuxaUyNdp-5feoc1A06enFlsfwndMNClQS0DKf3SJzmg0gqS2Ks3wQ/exec?action=check&stuID=${id}&stuName=${encodeURIComponent(name)}`;
+
+            try {
+                const response = await fetch(webAppUrl, {
+                    method: 'GET',
+                    redirect: 'follow'
+                });
+                const data = await response.json();
+
+                loader.style.display = "none";
+                resBody.innerHTML = "";
+
+                if (data.status === "success" && data.submissions) {
+                    if (data.submissions.length === 0) {
+                        alert("找不到資料，請確認學號與姓名是否正確輸入，或是找 Candy 確認！");
+                        return;
+                    }
+
+                    // 1. 把陣列轉換成以「題號」為 Key 的物件，如果有多筆，會保留最新的時間
+                    const exercisesMap = {};
+                    data.submissions.forEach(row => {
+                        const exNum = parseInt(row["題號"]);
+                        // 確保題號是有效數字
+                        if (!isNaN(exNum)) {
+                            // 轉換時間格式，例如：2026/03/10 19:44:41
+                            const timeStr = new Date(row["時間戳記"]).toLocaleString('zh-TW', { hour12: false });
+
+                            // 如果同一題已經有紀錄，我們會比較哪一個時間比較晚 (最新的)
+                            if (!exercisesMap[exNum] || new Date(row["時間戳記"]) > new Date(exercisesMap[exNum].rawTime)) {
+                                exercisesMap[exNum] = {
+                                    formattedTime: timeStr,
+                                    rawTime: row["時間戳記"]
+                                };
+                            }
+                        }
+                    });
+
+                    // 2. 產出題目的表格
+                    const exerciseDataJSON = document.getElementById('exercises-data').textContent;
+                    const exerciseData = JSON.parse(exerciseDataJSON);
+                    const exerciseIds = Object.keys(exerciseData).sort((a, b) => parseInt(a) - parseInt(b));
+                    const totalExercises = exerciseIds.length;
+                    let completedCount = 0;
+
+                    exerciseIds.forEach((id, idx) => {
+                        let statusHtml = "";
+                        let timeHtml = "";
+
+                        if (exercisesMap[id]) {
+                            // 有繳交紀錄
+                            completedCount++;
+                            statusHtml = `<span style="color: #4ade80; font-weight: bold;">✅ 已繳交</span>`;
+                            timeHtml = `<span style="color: var(--accent);">${exercisesMap[id].formattedTime}</span>`;
+                        } else {
+                            // 沒有繳交紀錄
+                            statusHtml = `<span style="color: #94a3b8;">❌ 未繳交</span>`;
+                            timeHtml = `<span style="color: #64748b;">沒有紀錄</span>`;
+                        }
+
+                        // 組合 HTML，偶數行加一點點底色幫助閱讀
+                        const tr = `<tr style="border-bottom: 1px solid rgba(255,255,255,0.05); background: ${idx % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'transparent'};">
+                  <td style="padding: 0.8rem; text-align: center; font-weight: bold;">
+                    <a href="exercise_${id}.html" target="_blank" style="color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent); padding-bottom: 2px; transition: opacity 0.2s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">${id}</a>
+                  </td>
+                  <td style="padding: 0.8rem; text-align: center;">${exerciseData[id].score}%</td>
+                  <td style="padding: 0.8rem;">${statusHtml}</td>
+                  <td style="padding: 0.8rem;">${timeHtml}</td>
+                </tr>`;
+                        resBody.innerHTML += tr;
+                    });
+
+                    // 更新完成進度
+                    const incompleteCount = totalExercises - completedCount;
+                    document.getElementById('count').innerText = incompleteCount;
+                    results.style.display = "block";
+
+                } else {
+                    // 假設學號姓名沒查到任何東西，我們還是可以把 20 題都列出來，全部顯示未繳交
+                    alert("查無此人，或是該生目前沒有任何繳交紀錄！");
+                }
+            } catch (err) {
+                loader.style.display = "none";
+                alert("連線發生錯誤，請稍後再試或檢查網路連線。");
+                console.error(err);
+            }
+        }
+    </script>
+
+    <h2 class="section-title">✨ 練習題 ✨</h2>
     <div class="container">
         {% for ex in exercises %}
         <a href="exercise_{{ ex.id }}.html" class="card exercise-card"
@@ -178,7 +335,7 @@
         {% endfor %}
     </div>
 
-    <h2 class="section-title">🐍 Starting Scripts</h2>
+    <h2 class="section-title">🐍 範例程式</h2>
     <div class="container">
         {% for script in scripts %}
         <a href="{{ script }}" class="card" style="animation-delay: {{ (loop.index0 + exercises|length) * 0.1 }}s">

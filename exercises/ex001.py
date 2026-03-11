@@ -1,5 +1,6 @@
 """
 title: 練習題 001 - Hello World!
+score: 1
 quest_html: 請在下方印出 <code>Hello World!</code> 字樣：<code-snippet>Hello World!</code-snippet>
 """
 
