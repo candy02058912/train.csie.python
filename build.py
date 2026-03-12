@@ -44,7 +44,7 @@ def load_exercises():
             "title": title,
             "score": score,
             "quest_html": quest_html,
-            "starter_code": starter_code,
+            "starter_code": starter_code + "\n",
             "test_code": test_code
         })
         

@@ -6,23 +6,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Python 學習進度繳交 - {{ ex.title }}</title>
     <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.20/codemirror.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.20/theme/pastel-on-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.20/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.20/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.20/addon/comment/comment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.20/addon/selection/active-line.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.20/keymap/sublime.min.js"></script>
+
 
     <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: white;
+            --text-color: #333;
+            --quest-bg: #e8f4fd;
+            --quest-border: #3498db;
+            --btn-bg: #27ae60;
+            --result-output-bg: #fdfdfd;
+        }
+
+        body.dark-mode {
+            --bg-color: #1a1a1a;
+            --card-bg: #2d2d2d;
+            --text-color: #e0e0e0;
+            --quest-bg: #37474f;
+            --quest-border: #4db6ac;
+            --btn-bg: #2ecc71;
+            --result-output-bg: #333;
+        }
+
         body {
             font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
             max-width: 1600px;
             width: 95%;
             margin: 20px auto;
-            background-color: #f4f7f6;
-            transition: all 0.3s;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
         }
 
         /* Responsive 2-Column Layout */
         .card {
-            background: white;
+            background: var(--card-bg);
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -32,6 +59,7 @@
             align-items: start;
             min-height: calc(100vh - 40px);
             box-sizing: border-box;
+            transition: background-color 0.3s;
         }
 
         @media (max-width: 850px) {
@@ -55,19 +83,20 @@
         }
 
         .quest {
-            background: #e8f4fd;
+            background: var(--quest-bg);
             padding: 15px;
-            border-left: 5px solid #3498db;
+            border-left: 5px solid var(--quest-border);
             margin-bottom: 20px;
             font-size: 17px;
             line-height: 1.6;
+            transition: background-color 0.3s;
         }
 
         /* Embed Mode Adjustments */
         body.embed-mode {
             margin: 0 !important;
             max-width: 100% !important;
-            background: white;
+            background: var(--bg-color);
             overflow: hidden;
             /* Prevent outer scrollbar */
             height: 100vh;
@@ -122,9 +151,40 @@
             width: 100%;
         }
 
+        /* Theme Toggle */
+        .theme-toggle {
+            background: var(--card-bg);
+            border: 1px solid #ddd;
+            padding: 6px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-color);
+            transition: all 0.3s;
+            width: auto;
+            margin-top: 0;
+            white-space: nowrap;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--quest-border);
+            background: var(--quest-bg);
+        }
+
+        .header-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 15px;
+        }
 
         button {
-            background: #27ae60;
+            background: var(--btn-bg);
             color: white;
             border: none;
             padding: 15px;
@@ -134,6 +194,7 @@
             width: 100%;
             margin-top: 20px;
             font-weight: bold;
+            transition: background-color 0.3s;
         }
 
         #result {
@@ -184,10 +245,15 @@
 </head>
 
 <body>
-
     <div class="card">
         <div class="quest-panel">
-            <h1>{{ ex.title }}</h1>
+            <div class="header-area">
+                <h1 style="margin: 0; font-size: 24px;">{{ ex.title }}</h1>
+                <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">
+                    <span id="theme-icon">🌙</span>
+                    <span id="theme-text">深色模式</span>
+                </button>
+            </div>
             <div class="quest">{{ ex.quest_html | safe }}</div>
         </div>
 
@@ -315,18 +381,65 @@
     </script>
 
     <script>
+        function updateThemeUI(isDark) {
+            const btn = document.getElementById('theme-btn');
+            const icon = document.getElementById('theme-icon');
+            const text = document.getElementById('theme-text');
+
+            if (isDark) {
+                document.body.classList.add('dark-mode');
+                icon.innerText = '☀️';
+                text.innerText = '淺色模式';
+                if (window.editor) window.editor.setOption('theme', 'pastel-on-dark');
+            } else {
+                document.body.classList.remove('dark-mode');
+                icon.innerText = '🌙';
+                text.innerText = '深色模式';
+                if (window.editor) window.editor.setOption('theme', 'default');
+            }
+        }
+
+        function toggleTheme() {
+            const isDark = !document.body.classList.contains('dark-mode');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            updateThemeUI(isDark);
+        }
+
+        // Initial theme check
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+
         // Check for embed mode
         if (new URLSearchParams(window.location.search).get('embed') === 'true') {
             document.body.classList.add('embed-mode');
 
             // Re-calculate size after the frame is fully loaded
             window.addEventListener('load', () => {
-                setTimeout(() => editor.refresh(), 200);
+                setTimeout(() => { if (window.editor) editor.refresh() }, 200);
             });
         }
 
         var editor = CodeMirror.fromTextArea(document.getElementById("python-code"), {
-            mode: "python", lineNumbers: true, indentUnit: 4
+            mode: "python",
+            lineNumbers: true,
+            indentUnit: 4,
+            theme: savedTheme === 'dark' ? "pastel-on-dark" : "default",
+            styleActiveLine: true,
+            extraKeys: {
+                "Cmd-/": "toggleComment",
+                "Ctrl-/": "toggleComment",
+                "Alt-Up": "swapLineUp",
+                "Alt-Down": "swapLineDown",
+                "Shift-Alt-Up": "duplicateLine",
+                "Shift-Alt-Down": "duplicateLine"
+            }
+        });
+
+        // Ensure the UI button matches the initial state
+        window.addEventListener('DOMContentLoaded', () => {
+            updateThemeUI(savedTheme === 'dark');
         });
 
         let pyodideInstance = null;
@@ -398,7 +511,7 @@ _run_student_code()
                 const formatOutputSnippet = (outStr) => {
                     if (!outStr || outStr.trim() === "") return "";
                     const escapedOut = outStr.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-                    return `<div style="margin-top: 15px; padding: 10px; background: #fdfdfd; border-left: 4px solid #999; border-radius: 4px; font-family: monospace; font-size: 14px; white-space: pre-wrap;"><strong>Console 輸出：</strong><br>${escapedOut}</div>`;
+                    return `<div style="margin-top: 15px; padding: 10px; background: var(--result-output-bg); border-left: 4px solid #999; border-radius: 4px; font-family: monospace; font-size: 14px; white-space: pre-wrap;"><strong>Console 輸出：</strong><br>${escapedOut}</div>`;
                 };
 
                 if (result.status === "SUCCESS") {
