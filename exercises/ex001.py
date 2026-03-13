@@ -21,6 +21,6 @@ def run_tests():
         if output == expected:
             return "SUCCESS"
         else:
-            return f"你的輸出為 \"{output}\"，但預期應該要是 \"{expected}\""
+            return f"❌ Console 內容不正確。\n\n[預期應該是]：\n{expected}\n\n[你的輸出是]：\n{output}"
     except Exception as e:
         return str(e)

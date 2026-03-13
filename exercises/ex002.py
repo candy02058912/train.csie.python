@@ -24,6 +24,6 @@ def run_tests():
         if end_health == 90:
             return "SUCCESS"
         else:
-            return f"山姆的剩餘血量應該要是 90，但你的程式計算結果為 {end_health}。"
+            return f"❌ 數字計算不正確喔。\n\n[預期應該是]：\n90\n\n[你的計算結果是]：\n{end_health}"
     except Exception as e:
         return str(e)

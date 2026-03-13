@@ -13,26 +13,21 @@ print(f"轉換成狗狗年齡後，你大約是：{dog_age} 歲")
 
 # ==== TEST CODE ====
 def run_tests():
-    # 準備測試用的模擬輸入
-    global _MOCK_INPUTS
-    _MOCK_INPUTS = ["10"] # 模擬學生輸入 10
-    
     try:
-        # 執行學生的程式碼
-        # 注意：這會使用我們在 template 定義的 custom_input
-        exec(studentCode, globals())
+        # 學生程式碼在外部執行時，age 已經由使用者輸入過
+        # 我們直接檢查結果是否符合人年齡的 7 倍
         
-        # 檢查變數 dog_age
-        # 如果學生沒轉型，10 * 7 會變成 "10101010101010" (字串)
-        # 如果學生有轉型，會是 70 (整數)
-        if dog_age == 70:
+        expected_dog_age = int(age) * 7
+        
+        if dog_age == expected_dog_age:
             return "SUCCESS"
-        elif dog_age == "10101010101010":
-            return "算錯囉！程式輸出了重複的字串，請記得把輸入轉成數字。"
+        elif dog_age == str(age) * 7:
+            return "❌ 算錯囉！程式輸出了重複的字串。\n\n[提示]：\n請記得把輸入 (input) 轉成數字 (int)。"
         else:
-            return f"計算結果不正確，輸入 10 得到的結果是 {dog_age}，預期應該要是 70。"
+            return f"❌ 數字計算不正確喔。\n\n[預期應該是]：\n{expected_dog_age}\n\n[你的計算結果是]：\n{dog_age}"
             
     except ValueError:
-        return "程式發生錯誤：轉換數字失敗。請確保你只對數字字串使用 int()。"
+        return "❌ 程式發生錯誤：轉換數字失敗。請確保你只對數字字串使用 int()。"
     except Exception as e:
-        return f"執行時發生錯誤：{str(e)}"
+        return f"執行測試時發生錯誤：{str(e)}"
+

@@ -25,6 +25,6 @@ def run_tests():
         else:
             actual_str = "\n".join(output)
             expected_str = "\n".join(expected)
-            return f"❌ Console 內容不正確。\n\n[預期應該是]：\n{expected_str}\n\n[你的輸出是]：\n{actual_str}"
+            return f"❌ 程式好像沒有正確印出預期的文字喔。\n[預期應該是]：\n{expected_str}\n\n[你的輸出是]：\n{actual_str}"
     except Exception as e:
         return str(e)
