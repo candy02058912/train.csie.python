@@ -1,7 +1,7 @@
 """
 title: 練習題 009：遊戲分數統計
 score: 1
-quest_html: 我們將模擬一個遊戲分數統計系統。請使用<b>「組合賦值運算子」</b>（如 <code>+=</code>, <code>*=</code>, <code>/=</code>）來更新變數，並最後使用 <b>F-String</b> 來輸出結果。<br><br><b>任務步驟：</b><br>1. 將四場比賽的分數加到 <code>total_score</code>。<br>2. 老師決定給予表現傑出的同學 50% 的加分，請對 <code>total_score</code> 使用 <code>*=</code> 乘以 1.5。<br>3. 計算平均分數，請將 <code>total_score</code> 除以 4，並用 <code>/=</code> 更新回 <code>total_score</code>。<br>4. 使用 <code>print()</code> 搭配 <code>f-string</code> 輸出：<code-snippet>最終平均分數為：{分數}</code-snippet> (請輸出原始數字即可，不用四捨五入)。
+quest_html: 我們將模擬一個遊戲分數統計系統。請使用<b>「組合賦值運算子」</b>（如 <code>+=</code>, <code>*=</code>, <code>/=</code>）來更新變數，並最後使用 <b>F-String</b> 來輸出結果。<br><br><b>任務步驟：</b><br>1. 將四場比賽的分數加到 <code>total_score</code>。<br>2. 老師很佛心，決定給 50% 的加分，請對 <code>total_score</code> 使用 <code>*=</code> 乘以 1.5。<br>3. 計算平均分數，請將 <code>total_score</code> 除以 4，並用 <code>/=</code> 更新回 <code>total_score</code>。<br>4. 使用 <code>print()</code> 搭配 <code>f-string</code> 輸出：<code-snippet>最終平均分數為：{分數}</code-snippet> (請輸出原始數字即可，不用四捨五入)。
 """
 
 # ==== STARTER CODE ====
