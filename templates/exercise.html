@@ -25,6 +25,12 @@
             --quest-border: #3498db;
             --btn-bg: #27ae60;
             --result-output-bg: #fdfdfd;
+            --pass-bg: #d4edda;
+            --pass-border: #c3e6cb;
+            --pass-text: #155724;
+            --fail-bg: #f8d7da;
+            --fail-border: #f5c6cb;
+            --fail-text: #721c24;
         }
 
         body.dark-mode {
@@ -35,6 +41,12 @@
             --quest-border: #4db6ac;
             --btn-bg: #2ecc71;
             --result-output-bg: #333;
+            --pass-bg: #1e4620;
+            --pass-border: #2e7d32;
+            --pass-text: #a5d6a7;
+            --fail-bg: #4c1d1d;
+            --fail-border: #b71c1c;
+            --fail-text: #ef9a9a;
         }
 
         body {
@@ -207,13 +219,15 @@
         }
 
         .pass {
-            background: #d4edda;
-            border: 2px solid #c3e6cb;
+            background: var(--pass-bg);
+            border: 2px solid var(--pass-border);
+            color: var(--pass-text);
         }
 
         .fail {
-            background: #f8d7da;
-            border: 2px solid #f5c6cb;
+            background: var(--fail-bg);
+            border: 2px solid var(--fail-border);
+            color: var(--fail-text);
         }
 
         .submit-area {
@@ -545,36 +559,35 @@ _run_student_code()
                 };
 
                 if (result.status === "SUCCESS") {
-                    resultDiv.className = "pass";
-                    resultDiv.innerHTML = `
-                    🎊 <strong>太棒了！挑戰成功！</strong>
-                    ${formatOutputSnippet(result.output)}
-                    <div class="submit-area" style="text-align: left; max-width: 300px; margin: 0 auto; margin-top: 15px;">
-                        <p style="text-align: center;">請填寫資料以登記成績：</p>
-                        <label>學號：</label><br>
-                        <input type="text" id="stuID" placeholder="請輸入學號" style="width: 100%; margin-bottom: 10px;"><br>
-                        <label>姓名：</label><br>
-                        <input type="text" id="stuName" placeholder="請輸入姓名" style="width: 100%;"><br>
-                        <button onclick="sendData()" style="width:100%; padding:10px; background:#3498db; margin-top:15px; color: white; border: none; cursor: pointer;">登記成績</button>
-                    </div>
+                   resultDiv.className = "pass";
+                   resultDiv.innerHTML = `
+                   🎊 <strong>太棒了！挑戰成功！</strong>
+                   ${formatOutputSnippet(result.output)}
+                   <div class="submit-area" style="text-align: left; max-width: 300px; margin: 0 auto; margin-top: 15px;">
+                       <p style="text-align: center;">請填寫資料以登記成績：</p>
+                       <label>學號：</label><br>
+                       <input type="text" id="stuID" placeholder="請輸入學號" style="width: 100%; margin-bottom: 10px;"><br>
+                       <label>姓名：</label><br>
+                       <input type="text" id="stuName" placeholder="請輸入姓名" style="width: 100%;"><br>
+                       <button onclick="sendData()" style="width:100%; padding:10px; background:#3498db; margin-top:15px; color: white; border: none; cursor: pointer;">登記成績</button>
+                   </div>
                 `;
                 } else if (result.status === "FAILURE") {
-                    resultDiv.className = "fail";
-                    resultDiv.innerHTML = `💡 <strong>答案不正確：</strong><br> <div style="white-space: pre-wrap; font-size: 14px; background: #fff; padding: 10px; border-radius: 4px; margin-top: 5px;">${result.message}</div> ${formatOutputSnippet(result.output)}`;
+                   resultDiv.className = "fail";
+                   resultDiv.innerHTML = `💡 <strong>答案不正確：</strong><br> <div style="white-space: pre-wrap; font-size: 14px; background: var(--result-output-bg); color: var(--text-color); padding: 10px; border-radius: 4px; margin-top: 5px;">${result.message}</div> ${formatOutputSnippet(result.output)}`;
                 } else {
-                    resultDiv.className = "fail";
-                    resultDiv.innerHTML = `🚨 <strong>程式執行發生錯誤：</strong><br><pre style="white-space: pre-wrap; font-size: 14px; background: #fff; padding: 10px; border-radius: 4px;">${result.message}</pre> ${formatOutputSnippet(result.output)}`;
+                   resultDiv.className = "fail";
+                   resultDiv.innerHTML = `🚨 <strong>程式執行發生錯誤：</strong><br><pre style="white-space: pre-wrap; font-size: 14px; background: var(--result-output-bg); color: var(--text-color); padding: 10px; border-radius: 4px;">${result.message}</pre> ${formatOutputSnippet(result.output)}`;
                 }
 
                 // Scroll result into view without aggressive jumping
                 resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
-            } catch (err) {
+                } catch (err) {
                 // Catch any unexpected syntax or JS/Pyodide crashes that would otherwise silently hang the UI
                 resultDiv.className = "fail";
-                resultDiv.innerHTML = `🚨 <strong>測試環境發生嚴重錯誤（可能為語法錯誤）：</strong><br><pre style="white-space: pre-wrap; font-size: 14px; background: #fff; padding: 10px; border-radius: 4px;">${err.message}</pre>`;
-            }
-        }
+                resultDiv.innerHTML = `🚨 <strong>測試環境發生嚴重錯誤（可能為語法錯誤）：</strong><br><pre style="white-space: pre-wrap; font-size: 14px; background: var(--result-output-bg); color: var(--text-color); padding: 10px; border-radius: 4px;">${err.message}</pre>`;
+                }        }
 
         async function sendData() {
             const id = document.getElementById("stuID").value;
