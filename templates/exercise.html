@@ -482,21 +482,50 @@ def _run_student_code():
     sys.stdout = CaptureOutput()
     sys.stderr = CaptureOutput()
     
+    # Setup custom input() to use browser prompt
+    import builtins
+    original_input = builtins.input
+    
+    def custom_input(prompt=""):
+        # Dynamically check for mock inputs in globals
+        mocks = globals().get("_MOCK_INPUTS")
+        if mocks and len(mocks) > 0:
+            return str(mocks.pop(0))
+        
+        import js
+        res = js.window.prompt(prompt)
+        return str(res) if res is not None else ""
+    
+    # Inject custom input into both builtins and globals
+    builtins.input = custom_input
+    globals()["input"] = custom_input
+    
     result = {"status": "SUCCESS", "message": "", "output": ""}
     
+    user_output = ""
     try:
-        # Evaluate student code then test asserts in the global context
+        # 1. 第一次執行：學生正式執行程式 (包含可能的 input 互動)
         exec(studentCode, globals())
+        user_output = sys.stdout.get_value() + sys.stderr.get_value()
+        
+        # 2. 第二次執行：測試環節 (定義測試邏輯並跑測試)
         exec(testCode, globals())
         test_result = run_tests()
+        
         if test_result != "SUCCESS":
             result["status"] = "FAILURE"
             result["message"] = test_result
+            
     except Exception as e:
         result["status"] = "ERROR"
         result["message"] = traceback.format_exc()
+        # 如果在測試之前就報錯，抓取當下的輸出
+        user_output = sys.stdout.get_value() + sys.stderr.get_value()
+    finally:
+        # Restore original input just in case
+        builtins.input = original_input
         
-    result["output"] = sys.stdout.get_value() + sys.stderr.get_value()
+    result["output"] = user_output # 僅回傳第一次執行的輸出給前端
     
     sys.stdout = old_stdout
     sys.stderr = old_stderr
