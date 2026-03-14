@@ -145,10 +145,6 @@
             /* Slightly smaller for embed */
         }
 
-        body.embed-mode .CodeMirror-gutters {
-            left: 0 !important;
-        }
-
         body.embed-mode button {
             padding: 10px;
             font-size: 16px;
@@ -277,7 +273,7 @@
 
             <button onclick="checkCode()">🏃‍♀️‍➡️ 跑看看 🏃‍♀️</button>
 
-            <div style="margin-top: 10px; font-size: 13px; color: #666; text-align: center;">
+            <div style="margin-top: 10px; font-size: 13px; color: var(--text-color); text-align: center;">
                 ⚠️ 如果程式執行過久（不小心寫了無限迴圈），瀏覽器當掉，請重開網頁。
             </div>
 
@@ -559,8 +555,8 @@ _run_student_code()
                 };
 
                 if (result.status === "SUCCESS") {
-                   resultDiv.className = "pass";
-                   resultDiv.innerHTML = `
+                    resultDiv.className = "pass";
+                    resultDiv.innerHTML = `
                    🎊 <strong>太棒了！挑戰成功！</strong>
                    ${formatOutputSnippet(result.output)}
                    <div class="submit-area" style="text-align: left; max-width: 300px; margin: 0 auto; margin-top: 15px;">
@@ -573,21 +569,22 @@ _run_student_code()
                    </div>
                 `;
                 } else if (result.status === "FAILURE") {
-                   resultDiv.className = "fail";
-                   resultDiv.innerHTML = `💡 <strong>答案不正確：</strong><br> <div style="white-space: pre-wrap; font-size: 14px; background: var(--result-output-bg); color: var(--text-color); padding: 10px; border-radius: 4px; margin-top: 5px;">${result.message}</div> ${formatOutputSnippet(result.output)}`;
+                    resultDiv.className = "fail";
+                    resultDiv.innerHTML = `💡 <strong>答案不正確：</strong><br> <div style="white-space: pre-wrap; font-size: 14px; background: var(--result-output-bg); color: var(--text-color); padding: 10px; border-radius: 4px; margin-top: 5px;">${result.message}</div> ${formatOutputSnippet(result.output)}`;
                 } else {
-                   resultDiv.className = "fail";
-                   resultDiv.innerHTML = `🚨 <strong>程式執行發生錯誤：</strong><br><pre style="white-space: pre-wrap; font-size: 14px; background: var(--result-output-bg); color: var(--text-color); padding: 10px; border-radius: 4px;">${result.message}</pre> ${formatOutputSnippet(result.output)}`;
+                    resultDiv.className = "fail";
+                    resultDiv.innerHTML = `🚨 <strong>程式執行發生錯誤：</strong><br><pre style="white-space: pre-wrap; font-size: 14px; background: var(--result-output-bg); color: var(--text-color); padding: 10px; border-radius: 4px;">${result.message}</pre> ${formatOutputSnippet(result.output)}`;
                 }
 
                 // Scroll result into view without aggressive jumping
                 resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
-                } catch (err) {
+            } catch (err) {
                 // Catch any unexpected syntax or JS/Pyodide crashes that would otherwise silently hang the UI
                 resultDiv.className = "fail";
                 resultDiv.innerHTML = `🚨 <strong>測試環境發生嚴重錯誤（可能為語法錯誤）：</strong><br><pre style="white-space: pre-wrap; font-size: 14px; background: var(--result-output-bg); color: var(--text-color); padding: 10px; border-radius: 4px;">${err.message}</pre>`;
-                }        }
+            }
+        }
 
         async function sendData() {
             const id = document.getElementById("stuID").value;
