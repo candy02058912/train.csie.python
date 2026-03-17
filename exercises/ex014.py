@@ -10,56 +10,64 @@ battery = input("請輸入目前電量 (0-100)：")
 
 # ==== TEST CODE ====
 import ast
-import sys
 
 def run_tests():
+    if 'studentCode' not in globals():
+        return "❌ 系統錯誤：無法讀取你的程式碼。"
+        
     try:
         # [防作弊機制]：使用 AST (語法樹) 檢查學生是否有使用 If 敘述
-        if 'studentCode' in globals():
-            try:
-                tree = ast.parse(studentCode)
-                has_if = False
-                for node in ast.walk(tree):
-                    if isinstance(node, ast.If):
-                        has_if = True
-                        break
-                if not has_if:
-                    return "❌ 任務失敗！\n\n系統沒有偵測到任何 `if` 判斷式。\n請務必使用 `if`、`elif` 與 `else` 來根據電量印出對應的文字，不能只用 `print()` 偷矇過關喔！😜"
-            except SyntaxError as e:
-                return f"❌ 語法錯誤：{str(e)}"
+        tree = ast.parse(studentCode)
+        has_if = False
+        for node in ast.walk(tree):
+            if isinstance(node, ast.If):
+                has_if = True
+                break
+        if not has_if:
+            return "❌ 任務失敗！\n\n系統沒有偵測到任何 `if` 判斷式。\n請務必使用 `if`、`elif` 與 `else` 來根據電量印出對應的文字，不能只用 `print()` 偷矇過關喔！😜"
+    except SyntaxError as e:
+        return f"❌ 語法錯誤：{str(e)}"
+        
+    # [背景偷偷測試多種情境]
+    import io
+    import contextlib
 
-        # 1. 檢查變數
-        if 'battery' not in globals():
-            return "❌ 找不到變數 `battery`，請確保你有將輸入的值轉型並存入。"
+    test_cases = [
+        ("85", "電量充足！"),
+        ("80", "電量充足！"),
+        ("50", "電量正常。"),
+        ("40", "電量正常。"),
+        ("20", "電量偏低，建議充電。"),
+        ("15", "電量偏低，建議充電。"),
+        ("5", "電量極低，即將自動關機...")
+    ]
+
+    for test_input, expected_msg in test_cases:
+        local_env = {}
+        # 覆寫 input 函數來模擬使用者輸入
+        def mock_input(prompt=""):
+            return test_input
             
-        student_battery = globals()['battery']
-        if type(student_battery) is not int:
-            return "❌ `battery` 的型別錯誤，請記得使用 `int()` 進行轉型喔！"
-
-        # 2. 動態決定系統預期輸出的訊息
-        expected_msg = ""
-        if student_battery >= 80:
-            expected_msg = "電量充足！"
-        elif student_battery >= 40:
-            expected_msg = "電量正常。"
-        elif student_battery >= 15:
-            expected_msg = "電量偏低，建議充電。"
-        else:
-            expected_msg = "電量極低，即將自動關機..."
+        global_env = {'__builtins__': __builtins__, 'input': mock_input}
+        output = io.StringIO()
+        
+        try:
+            with contextlib.redirect_stdout(output):
+                exec(studentCode, global_env, local_env)
             
-        # 3. 檢查 Console 輸出內容
-        captured_output = sys.stdout.get_value().strip()
-        cleaned_captured = "\n".join([line.rstrip() for line in captured_output.split("\n")])
-
-        if expected_msg in cleaned_captured:
-            return "SUCCESS"
-        else:
-            return (
-                f"❌ 判斷與輸出不完全正確 (以電量 {student_battery} 計算)。\n\n"
-                f"[系統預其印出]： {expected_msg}\n"
-                f"[你的實際輸出]： {captured_output}\n\n"
-                f"[提示]：請檢查大於等於 (`>=`) 的判斷邏輯是否正確，以及印出的文字是否有錯字或漏掉標點符號。"
-            )
-
-    except Exception as e:
-        return f"❌ 測試系統執行時發生錯誤：{str(e)}"
+            captured = output.getvalue().strip()
+            cleaned = "\n".join([line.rstrip() for line in captured.split("\n")])
+            
+            if expected_msg not in cleaned:
+                return (
+                    f"❌ 判斷與輸出不完全正確 (系統在背景偷偷測試電量 {test_input})。\n\n"
+                    f"[系統預期包含]： {expected_msg}\n"
+                    f"[你的實際輸出]： {captured}\n\n"
+                    f"[提示]：請檢查大於等於 (`>=`) 的判斷邏輯是否正確，以及印出的文字是否有錯字或漏掉標點符號。"
+                )
+        except ValueError:
+            return f"❌ 執行錯誤：在測試電量 '{test_input}' 時發生 ValueError。\n請確定你有正確使用 `int()` 把 `input` 轉換為整數喔！"
+        except Exception as e:
+            return f"❌ 執行錯誤 (測試電量 {test_input})：\n{type(e).__name__}: {str(e)}"
+            
+    return "SUCCESS"
