@@ -1,7 +1,7 @@
 """
 title: 練習題 013：True/False 大對決
 score: 1
-quest_html: <b>大腦體操時間！</b>請試著在腦中模擬 Python 的運作，判斷下列 10 個比較運算式會得到 <code>True</code> 還是 <code>False</code>。<br><br>提示：注意<b>優先順序</b>，先算括號內的，再算外面的。
+quest_html: <b>大腦體操時間！</b>請試著在腦中模擬 Python 的運作，判斷下列 15 個比較與邏輯運算式會得到 <code>True</code> 還是 <code>False</code>。<br><br>提示：注意<b>優先順序</b>，先算括號內的，再算外面的。
 """
 
 # ==== STARTER CODE ====
@@ -37,12 +37,26 @@ ans_09 =
 # 第 10 題： (3 <= 5) != (3 >= 5)
 ans_10 = 
 
+# 第 11 題： not False
+ans_11 = 
+
+# 第 12 題： True and False
+ans_12 = 
+
+# 第 13 題： True or False
+ans_13 = 
+
+# 第 14 題： (5 > 3) and (10 < 20)
+ans_14 = 
+
+# 第 15 題： (True and False) or (True and False)
+ans_15 = 
 
 # ==== TEST CODE ====
 import ast
 
 def run_tests():
-    # 定義第 1 到第 10 題的正確解答
+    # 定義第 1 到第 15 題的正確解答
     expected_answers = {
         'ans_01': False,
         'ans_02': True,
@@ -53,7 +67,12 @@ def run_tests():
         'ans_07': True,
         'ans_08': False,
         'ans_09': True,
-        'ans_10': True
+        'ans_10': True,
+        'ans_11': True,
+        'ans_12': False,
+        'ans_13': True,
+        'ans_14': True,
+        'ans_15': False
     }
     
     try:
