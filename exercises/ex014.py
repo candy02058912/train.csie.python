@@ -1,7 +1,7 @@
 """
 title: 練習題 014：手機電量警報器
 score: 1
-quest_html: 你的手機快沒電了嗎？讓我們用語法 <code>if / elif / else</code> 寫一個電量判斷系統！<br><br><b>任務需求：</b><br>1. 程式會先使用 <code>input()</code> 詢問目前電量，請記得將輸入的字串轉為<b>整數 (int)</b>，並存入變數 <code>battery</code> 中。<br>2. 請使用 <code>if</code>、<code>elif</code> 與 <code>else</code> 來判斷 <code>battery</code> 的數值，並 <b><code>print()</code></b> 出對應的訊息：<br>&nbsp;&nbsp;&nbsp;&nbsp;🔋 如果大於等於 <b>80</b>： 印出 <code-snippet>電量充足！</code-snippet><br>&nbsp;&nbsp;&nbsp;&nbsp;🔋 如果大於等於 <b>40</b>： 印出 <code-snippet>電量正常。</code-snippet><br>&nbsp;&nbsp;&nbsp;&nbsp;🔋 如果大於等於 <b>15</b>： 印出 <code-snippet>電量偏低，建議充電。</code-snippet><br>&nbsp;&nbsp;&nbsp;&nbsp;🔋 若都不符合： 印出 <code-snippet>電量極低，即將自動關機...</code-snippet><br><br><b>注意：</b>請確實使用 <code>if</code> 語法，如果只是偷吃步直接 <code>print</code> 答案，測試系統是不會讓你過關的喔！
+quest_html: 你的手機快沒電了嗎？讓我們用語法 <code>if / elif / else</code> 寫一個電量判斷系統！<br><br><b>任務需求：</b><br>1. 程式會先使用 <code>input()</code> 詢問目前電量，請記得將輸入的字串轉為<b>整數 (int)</b>，並存入變數 <code>battery</code> 中。<br>2. 請使用 <code>if</code>、<code>elif</code> 與 <code>else</code> 來判斷 <code>battery</code> 的數值，並 <b><code>print()</code></b> 出對應的訊息：<br>🔋 如果大於等於 <b>80</b>，印出：<code-snippet>電量充足！</code-snippet><br>🔋 如果大於等於 <b>40</b>，印出： <code-snippet>電量正常。</code-snippet><br>🔋 如果大於等於 <b>15</b>，印出： <code-snippet>電量偏低，建議充電。</code-snippet><br>🔋 若都不符合，印出： <code-snippet>電量極低，即將自動關機...</code-snippet>
 """
 
 # ==== STARTER CODE ====
