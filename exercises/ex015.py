@@ -1,5 +1,5 @@
 """
-title: 練習題 015：網購免運判定器
+title: 練習題 015：網購免運判定
 score: 1
 quest_html: 延續我們瘋狂購物的行程！這次商店有「<b>滿千免運</b>」或是「<b>VIP 免運</b>」的活動，請用語法 <code>if / else</code> 搭配邏輯運算子 (<code>and</code> 或 <code>or</code>) 寫一個驗證系統。<br><br><b>任務需求：</b><br>1. 題目提供了兩個變數：「消費金額 (<code>total</code>)」與「是否為 VIP (<code>vip</code>)」(字串 `Y` 或 `N`)。<br>2. 撰寫判斷邏輯：<br>📦 如果消費金額大於等於 <b>1000</b>，<u>或是</u> VIP 狀態為 <b>Y</b>，印出： <code-snippet>免運費！</code-snippet><br>📦 若兩者都不符合，印出：<code-snippet>需要運費 60 元。</code-snippet><br><br><b>注意：</b>送出解答時，系統會在背景代入各種消費組合偷偷測試你的程式碼喔！請確保邏輯正確無誤。
 """
