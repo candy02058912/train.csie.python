@@ -1,5 +1,5 @@
 """
-title: 練習題 019：自動留言審查系統 (字串與 Continue)
+title: 練習題 019：自動留言審查系統
 score: 1
 quest_html: 為了維護網路社群的友善環境，請幫忙寫一個自動留言審查系統！<br>當系統偵測到敏感字眼時，要跳過印出該文字，並發出警告。<br><br><b>任務需求：</b><br>1. 系統設定了一個字串變數 <code>comment = "這部影片太爛了"</code>。<br>2. 請先 <code>print()</code> 出一行提示文字：<code-snippet>--- 系統開始檢查留言 ---</code-snippet><br>3. 使用 <code>for</code> 迴圈遍歷 <code>comment</code> 中的每一個字元，變數名稱請設為 <b><code>char</code></b>。<br>4. 在迴圈內部使用 <code>if</code> 判斷：<br>&nbsp;&nbsp;&nbsp;&nbsp;🚫 如果 <code>char</code> 等於 <b>"爛"</b>，請印出：<code-snippet>🚩 偵測到敏感字眼：[嗶---]</code-snippet>，並執行 <b><code>continue</code></b> 跳過這一回合。<br>5. 在 <code>if</code> 判斷式之後（迴圈內部），正常印出變數 <b><code>char</code></b>。<br><br><b>💡 提示：</b><br><code>continue</code> 會讓程式直接跳回迴圈的開頭，執行下一個字元，因此寫在 <code>continue</code> 下方的 <code>print(char)</code> 就不會被執行到喔！
 """
