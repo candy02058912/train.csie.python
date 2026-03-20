@@ -1,16 +1,16 @@
 """
-title: 練習題 015b：分數等級判定
+title: 練習題 015b：猜數字 (前置)
 score: 1
-quest_html: 這次我們要練習更多的條件分支：<code>if / elif / else</code>！這能幫你同時判斷多個區間。<br><br><b>任務需求：</b><br>1. 系統已經設定了變數 <code>score</code> (代表分數)。<br>2. 撰寫判斷邏輯：<br>🏅 如果 <code>score &gt;= 90</code>，印出：<code-snippet>表現優秀！</code-snippet><br>🆗 如果 <code>score &gt;= 60</code> (且小於 90)，印出：<code-snippet>及格了。</code-snippet><br>🆘 否則 (小於 60)，印出：<code-snippet>還要加油喔。</code-snippet><br><br><b>💡 小撇步：</b>別忘了 <code>if</code>、<code>elif</code> 和 <code>else</code> 那三行後面都要各加一個冒號 <code>:</code> 喔！
+quest_html: 這次我們要來玩猜數字！雖然還沒有學會讓程式一直跑的迴圈 (loop)，但我們可以先練習「猜一次」的判斷邏輯。<br>系統已經設定好了一個答案 <code>ans</code> 還有你猜的數字 <code>guess</code>。<br><br><b>任務需求：</b><br>1. 系統已經設定了變數 <code>ans</code> (正確答案) 和 <code>guess</code> (你猜的數字)。<br>2. 撰寫判斷邏輯：<br>📈 如果 <code>guess > ans</code>，印出：<code-snippet>太大了，再小一點。</code-snippet><br>📉 如果 <code>guess < ans</code>，印出：<code-snippet>太小了，再大一點。</code-snippet><br>🎉 否則 (代表猜中了)，印出：<code-snippet>恭喜你猜中了！</code-snippet><br><br><b>💡 小撇步：</b>別忘記 <code>if</code> 和 <code>elif</code> 後面要接條件，最後的 <code>else</code> 不需要條件，且這三行後面都要加冒號 <code>:</code>！
 """
 
 # ==== STARTER CODE ====
-# 預設分數為 85
-score = 85
+# 答案是 42，你猜 30
+ans = 42
+guess = 30
 
 # 請在下方開始寫你的程式碼
-
-
+    
 # ==== TEST CODE ====
 import ast
 
@@ -48,22 +48,27 @@ def run_tests():
     import re
 
     test_cases = [
-        (95, "表現優秀！"),
-        (90, "表現優秀！"),
-        (75, "及格了。"),
-        (60, "及格了。"),
-        (40, "還要加油喔。")
+        (42, 42, "恭喜你猜中了！"),
+        (42, 50, "太大了，再小一點。"),
+        (42, 30, "太小了，再大一點。")
     ]
 
-    for score_val, expected_msg in test_cases:
+    for ans_val, guess_val, expected_msg in test_cases:
         local_env = {}
         global_env = {'__builtins__': __builtins__}
         output = io.StringIO()
         
+        # Patch ans AND guess
         patched_code = re.sub(
-            r"^score\s*=\s*.*$", 
-            f"score = {score_val}", 
+            r"^ans\s*=\s*.*$", 
+            f"ans = {ans_val}", 
             studentCode, 
+            flags=re.MULTILINE
+        )
+        patched_code = re.sub(
+            r"^guess\s*=\s*.*$", 
+            f"guess = {guess_val}", 
+            patched_code, 
             flags=re.MULTILINE
         )
         
@@ -73,8 +78,8 @@ def run_tests():
             
             captured = output.getvalue().strip()
             if expected_msg not in captured:
-                return f"❌ Console 內容不正確 (測試分數：{score_val})\n\n[預期應該看到]：{expected_msg}\n[你的實際輸出]：{captured}"
+                return f"❌ Console 內容不正確 (測試數字：答案={ans_val}, 你猜={guess_val})\n\n[預期應該看到]：{expected_msg}\n[你的實際輸出]：{captured}"
         except Exception as e:
-            return f"❌ 執行錯誤 (測試分數 {score_val})：\n{str(e)}"
+            return f"❌ 執行錯誤 (測試數字：答案={ans_val}, 你猜={guess_val})：\n{str(e)}"
             
     return "SUCCESS"
