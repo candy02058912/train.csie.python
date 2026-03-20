@@ -274,7 +274,7 @@
                     // 2. 產出題目的表格
                     const exerciseDataJSON = document.getElementById('exercises-data').textContent;
                     const exerciseData = JSON.parse(exerciseDataJSON);
-                    const exerciseIds = Object.keys(exerciseData).sort((a, b) => parseInt(a) - parseInt(b));
+                    const exerciseIds = Object.keys(exerciseData).sort((a, b) => a.localeCompare(b, undefined, {numeric: true, sensitivity: 'base'}));
                     const totalExercises = exerciseIds.length;
                     let completedCount = 0;
 

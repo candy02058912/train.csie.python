@@ -12,7 +12,8 @@ load_dotenv()
 def load_exercises():
     exercises = []
     exercise_files = glob.glob("exercises/ex*.py")
-    exercise_files.sort()
+    # Natural sort for filenames (e.g., ex15 before ex15a, ex15a before ex16)
+    exercise_files.sort(key=lambda f: [int(c) if c.isdigit() else c for c in re.split(r'(\d+)', f)])
     
     for idx, filepath in enumerate(exercise_files):
         with open(filepath, "r", encoding="utf-8") as f:
@@ -35,9 +36,14 @@ def load_exercises():
         starter_code = code_parts[0].strip() if len(code_parts) > 0 else ""
         test_code = code_parts[1].strip() if len(code_parts) > 1 else ""
         
-        # Determine ID from filename (e.g., ex001.py -> 1)
+        # Determine ID from filename (e.g., ex015a.py -> 15a)
         filename = os.path.basename(filepath)
-        id_str = str(int(re.search(r"\d+", filename).group()))
+        # Extract the digits and whatever follows
+        match = re.search(r"ex(\d+)(.*)\.py", filename)
+        if match:
+            id_str = str(int(match.group(1))) + match.group(2)
+        else:
+            id_str = filename.replace("ex", "").replace(".py", "")
         
         exercises.append({
             "id": id_str,
@@ -51,6 +57,8 @@ def load_exercises():
     return exercises
 
 def generate_html():
+    if os.path.exists("dist"):
+        shutil.rmtree("dist")
     os.makedirs("dist", exist_ok=True)
     
     # Copy scripts
