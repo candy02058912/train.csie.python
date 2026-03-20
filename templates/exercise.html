@@ -502,8 +502,20 @@ def _run_student_code():
         if mocks and len(mocks) > 0:
             return str(mocks.pop(0))
         
+        # Get current captured stdout/stderr to show as context in the prompt
+        # Use a simplified approach as sys.stdout is our CaptureOutput object
         import js
-        res = js.window.prompt(prompt)
+        current_out = sys.stdout.get_value()
+        {% if ex.id == '18' %}
+        # 僅抓取最後一行的輸出
+        lines = [l.strip() for l in current_out.split("\\n") if l.strip()]
+        last_line = lines[-1] if lines else ""
+        display_msg = (last_line + "\\n" + prompt).strip()
+        {% else %}
+        display_msg = prompt
+        {% endif %}
+        
+        res = js.window.prompt(display_msg)
         return str(res) if res is not None else ""
     
     # Inject custom input into both builtins and globals
