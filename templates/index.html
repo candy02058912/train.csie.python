@@ -252,12 +252,12 @@
                         return;
                     }
 
-                    // 1. 把陣列轉換成以「題號」為 Key 的物件，如果有多筆，會保留最新的時間
                     const exercisesMap = {};
                     data.submissions.forEach(row => {
-                        const exNum = parseInt(row["題號"]);
-                        // 確保題號是有效數字
-                        if (!isNaN(exNum)) {
+                        const rawExNum = row["題號"].toString().trim();
+                        const match = rawExNum.match(/^(\d+)(.*)$/);
+                        if (match) {
+                            const exNum = parseInt(match[1]).toString() + match[2];
                             // 轉換時間格式，例如：2026/03/10 19:44:41
                             const timeStr = new Date(row["時間戳記"]).toLocaleString('zh-TW', { hour12: false });
 
@@ -271,10 +271,9 @@
                         }
                     });
 
-                    // 2. 產出題目的表格
                     const exerciseDataJSON = document.getElementById('exercises-data').textContent;
                     const exerciseData = JSON.parse(exerciseDataJSON);
-                    const exerciseIds = Object.keys(exerciseData).sort((a, b) => a.localeCompare(b, undefined, {numeric: true, sensitivity: 'base'}));
+                    const exerciseIds = Object.keys(exerciseData).sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
                     const totalExercises = exerciseIds.length;
                     let completedCount = 0;
 
