@@ -1,7 +1,7 @@
 """
 title: 練習題 015c：冒險者大門
 score: 1
-quest_html: 這是 <code>if</code> 語法的終極挑戰！你需要同時處理多個條件，並使用<b>邏輯運算子 (and / or)</b>。<br><br><b>任務需求：</b><br>1. 系統設定了兩個變數：剩餘體力 <code>stamina</code> 與是否擁有鑰匙 <code>has_key</code> (True 或 False)。<br>2. 撰寫大門開啟邏輯：<br>🔑 如果體力大於 50 <u>且</u> 擁有鑰匙，印出：<code-snippet>成功使用鑰匙開啟寶庫！</code-snippet><br>🛡️ 否則，如果你體力大於或等於 90，印出：<code-snippet>體力充沛，成功撞破大門！</code-snippet><br>🚫 以上皆非，印出：<code-snippet>大門仍牢牢地鎖著。</code-snippet><br><br><b>💡 注意：</b>所有的 <code>if</code>、<code>elif</code>、<code>else</code> 後面一定要加冒號 <code>:</code>。
+quest_html: 這是 <code>if</code> 語法的終極挑戰！你需要同時處理多個條件。<br><br><b>任務需求：</b><br>1. 系統設定了兩個變數：剩餘體力 <code>stamina</code> 與是否擁有鑰匙 <code>has_key</code> (True 或 False)。<br>2. 撰寫大門開啟邏輯：<br>🔑 如果體力大於 50 <u>且</u> 擁有鑰匙，印出：<code-snippet>成功使用鑰匙開啟寶庫！</code-snippet><br>🛡️ 否則，如果你體力大於或等於 90，印出：<code-snippet>體力充沛，成功撞破大門！</code-snippet><br>🚫 以上皆非，印出：<code-snippet>大門仍牢牢地鎖著。</code-snippet><br><br><b>💡 注意：</b>所有的 <code>if</code>、<code>elif</code>、<code>else</code> 後面一定要加冒號 <code>:</code>。
 """
 
 # ==== STARTER CODE ====
