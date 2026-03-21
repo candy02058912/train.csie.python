@@ -436,9 +436,19 @@
             mode: "python",
             lineNumbers: true,
             indentUnit: 4,
+            tabSize: 4,
+            indentWithTabs: false,
             theme: savedTheme === 'dark' ? "pastel-on-dark" : "default",
             styleActiveLine: true,
             extraKeys: {
+                "Tab": function(cm) {
+                    if (cm.somethingSelected()) {
+                        cm.indentSelection("add");
+                    } else {
+                        cm.replaceSelection(cm.getOption("indentWithTabs") ? "\t" : 
+                            Array(cm.getOption("indentUnit") + 1).join(" "), "end", "+input");
+                    }
+                },
                 "Cmd-/": "toggleComment",
                 "Ctrl-/": "toggleComment",
                 "Alt-Up": "swapLineUp",
