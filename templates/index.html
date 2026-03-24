@@ -262,7 +262,7 @@
                         // 轉換時間格式，例如：2026/03/10 19:44:41
                         const timeStr = new Date(row["時間戳記"]).toLocaleString('zh-TW', { hour12: false });
 
-                        // 如果同一題已經有紀錄，我們會比較哪一個時間比較晚 (最新的)
+                        // 如果同一題已經有紀錄，比較哪一個時間比較近
                         if (!exercisesMap[exNum] || new Date(row["時間戳記"]) > new Date(exercisesMap[exNum].rawTime)) {
                             exercisesMap[exNum] = {
                                 formattedTime: timeStr,
@@ -282,20 +282,23 @@
                         let timeHtml = "";
 
                         if (exercisesMap[id]) {
-                            // 有繳交紀錄
                             completedCount++;
                             statusHtml = `<span style="color: #4ade80; font-weight: bold;">✅ 已繳交</span>`;
                             timeHtml = `<span style="color: var(--accent);">${exercisesMap[id].formattedTime}</span>`;
                         } else {
-                            // 沒有繳交紀錄
                             statusHtml = `<span style="color: #94a3b8;">❌ 未繳交</span>`;
                             timeHtml = `<span style="color: #64748b;">沒有紀錄</span>`;
                         }
 
+                        const linkMap = {
+                            "typing_game": "typing_game.py"
+                        };
+                        const targetUrl = linkMap[id] || `exercise_${id}.html`;
+
                         // 組合 HTML，偶數行加一點點底色幫助閱讀
                         const tr = `<tr style="border-bottom: 1px solid rgba(255,255,255,0.05); background: ${idx % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'transparent'};">
                   <td style="padding: 0.8rem; text-align: center; font-weight: bold;">
-                    <a href="exercise_${id}.html" target="_blank" style="color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent); padding-bottom: 2px; transition: opacity 0.2s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">${id}</a>
+                    <a href="${targetUrl}" target="_blank" style="color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent); padding-bottom: 2px; transition: opacity 0.2s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">${id}</a>
                   </td>
                   <td style="padding: 0.8rem; text-align: center;">${exerciseData[id].score}%</td>
                   <td style="padding: 0.8rem;">${statusHtml}</td>
@@ -310,7 +313,6 @@
                     results.style.display = "block";
 
                 } else {
-                    // 假設學號姓名沒查到任何東西，我們還是可以把 20 題都列出來，全部顯示未繳交
                     alert("查無此人，或是該生目前沒有任何繳交紀錄！");
                 }
             } catch (err) {
