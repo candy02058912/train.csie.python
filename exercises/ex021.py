@@ -1,7 +1,7 @@
 """
 title: 練習題 021：我的購物清單
 score: 1
-quest_html: 歡迎來到 list 的世界！List 就像是一個可以裝很多東西的箱子，而且裡面的內容可以隨時更換、新增。<br><br><b>💡 List 的重點：</b><br>1. 使用中括號 <code>[]</code> 建立（宣告）<br>2. <b>Index 從 0 開始</b>！第一個是 <code>[0]</code>，第二個是 <code>[1]</code><br>3. <b>mutable (可變)</b>：可以直接修改裡面的內容，例如 <code>shop[0] = "梨子"</code><br>4. <code>len(shop)</code>：可以看這個清單總共有幾個內容 (length)<br>5. <code>shop.append("糖果")</code>：可以在清單的<b>最末尾</b>添加新東西<br><br><b>任務需求：</b><br>請依照順序完成以下操作：<br>1. 建立一個名為 <b><code>shop</code></b> 的清單，內含兩個字串："蘋果" 和 "香蕉"<br>2. 把 "糖果" 加到清單中<br>3. 將清單中<b>第 0 個</b>內容修改為 "榴槤"<br>4. 印出清單中的<b>最後一個</b>內容<br>5. 印出清單目前的<b>長度</b>。<br><br><b>💡 提示：</b>從 0 開始！從 0 開始！從 0 開始！(很重要所以說三次 XD)
+quest_html: 歡迎來到 list 的世界！List 就像是一個可以裝很多東西的箱子，而且裡面的內容可以隨時更換、新增。<br><br>請依照程式碼下方的步驟提示，完成 <code>shop</code> 清單的所有操作吧！
 """
 
 # ==== STARTER CODE ====
