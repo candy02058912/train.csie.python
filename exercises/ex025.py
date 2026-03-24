@@ -1,7 +1,7 @@
 """
 title: 練習題 025：飲料訂單
 score: 1
-quest_html: 在現代的 Python (3.7 版本以上) 中，字典 (Dictionary) 是<b>「有序的」</b>，這代表你「先加進去的資料，用迴圈拿出來的時候也會在前面」！<br><br>我們來幫飲料店處理訂單吧！<br><br><b>任務需求：</b><br>1. 依序將這三筆資料加入 <code>orders</code> 字典中：<br> - key: <code-snippet>Alice</code-snippet>, value: <code-snippet>珍奶</code-snippet><br> - key: <code-snippet>Bob</code-snippet>, value: <code-snippet>綠茶</code-snippet><br> - key: <code-snippet>Candy</code-snippet>, value: <code-snippet>烏龍茶</code-snippet><br>2. 老闆想知道有哪些人點飲料。請用 <b><code>for</code> 迴圈</b> 走訪字典的 <b>key</b> 並逐一印出人名。<br>3. 負責泡飲料的店員想知道要做哪些飲料。請用 <b><code>.values()</code></b> 走訪字典的 <b>value</b> 並逐一印出飲料名。<br>4. 最後做訂單總覽。請用 <b><code>.items()</code></b> 走訪字典的 <b>key 和 value</b>，並逐一印出：<code-snippet>{人名} 點了 {飲料}</code-snippet>
+quest_html: 在現代的 Python (3.7 版本以上) 中，字典 (Dictionary) 是<b>「有序的」</b>，這代表你「先加進去的資料，用迴圈拿出來的時候也會在前面」！<br><br>我們來幫飲料店處理訂單吧！<br><br><b>任務需求：</b><br>1. 依序將這三筆資料加入 <code>orders</code> 字典中：<br> - key: <code>"Alice"</code>, value: <code>"珍奶"</code><br> - key: <code>"Bob"</code>, value: <code>"綠茶"</code><br> - key: <code>"Candy"</code>, value: <code>"烏龍茶"</code><br>2. 老闆想知道有哪些人點飲料。請用 <b><code>for</code> 迴圈</b> 走訪字典的 <b>key</b> 並逐一印出人名。<br>3. 負責泡飲料的店員想知道要做哪些飲料。請用 <b><code>.values()</code></b> 走訪字典的 <b>value</b> 並逐一印出飲料名。<br>4. 最後做訂單總覽。請用 <b><code>.items()</code></b> 走訪字典的 <b>key 和 value</b>，並逐一印出：<br><code-snippet>{人名} 點了 {飲料}</code-snippet>
 """
 
 # ==== STARTER CODE ====

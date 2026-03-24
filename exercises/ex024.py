@@ -1,5 +1,5 @@
 """
-title: 練習題 024：字典 (dict) 基礎操作
+title: 練習題 024：字典基礎操作
 score: 1
 quest_html: 實習生小明剛學會 Python 的字典 (dict)，他在整理一份課程資料 <code>course_info</code> 時遇到了一些困難。<br>請依照程式碼下方的步驟提示，幫他完成所有的資料操作吧！
 """
