@@ -94,6 +94,14 @@ def generate_html():
     index_template = env.get_template('index.html')
     
     exercises_map = {ex["id"]: {"id": ex["id"], "score": ex["score"]} for ex in exercises}
+    
+    # Local exercises (not in exercises/ folder, checked via local scripts)
+    local_exercises = [
+        {"id": "typing_game", "score": 1},
+    ]
+    for local_ex in local_exercises:
+        exercises_map[local_ex["id"]] = local_ex
+    
     exercises_json = json.dumps(exercises_map)
     
     index_html = index_template.render(

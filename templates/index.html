@@ -255,19 +255,19 @@
                     const exercisesMap = {};
                     data.submissions.forEach(row => {
                         const rawExNum = row["題號"].toString().trim();
-                        const match = rawExNum.match(/^(\d+)(.*)$/);
-                        if (match) {
-                            const exNum = parseInt(match[1]).toString() + match[2];
-                            // 轉換時間格式，例如：2026/03/10 19:44:41
-                            const timeStr = new Date(row["時間戳記"]).toLocaleString('zh-TW', { hour12: false });
+                        if (!rawExNum) return;
+                        // 數字開頭的題號去掉前導零，非數字的直接用原始值
+                        const numMatch = rawExNum.match(/^(\d+)(.*)$/);
+                        const exNum = numMatch ? parseInt(numMatch[1]).toString() + numMatch[2] : rawExNum;
+                        // 轉換時間格式，例如：2026/03/10 19:44:41
+                        const timeStr = new Date(row["時間戳記"]).toLocaleString('zh-TW', { hour12: false });
 
-                            // 如果同一題已經有紀錄，我們會比較哪一個時間比較晚 (最新的)
-                            if (!exercisesMap[exNum] || new Date(row["時間戳記"]) > new Date(exercisesMap[exNum].rawTime)) {
-                                exercisesMap[exNum] = {
-                                    formattedTime: timeStr,
-                                    rawTime: row["時間戳記"]
-                                };
-                            }
+                        // 如果同一題已經有紀錄，我們會比較哪一個時間比較晚 (最新的)
+                        if (!exercisesMap[exNum] || new Date(row["時間戳記"]) > new Date(exercisesMap[exNum].rawTime)) {
+                            exercisesMap[exNum] = {
+                                formattedTime: timeStr,
+                                rawTime: row["時間戳記"]
+                            };
                         }
                     });
 
@@ -335,10 +335,12 @@
     <h2 class="section-title">🐍 範例程式</h2>
     <div class="container">
         {% for script in scripts %}
+        {% if '_checker' not in script %}
         <a href="{{ script }}" class="card" style="animation-delay: {{ (loop.index0 + exercises|length) * 0.1 }}s">
             <div class="icon">📝</div>
             <h2>{{ script }}</h2>
         </a>
+        {% endif %}
         {% endfor %}
     </div>
 </body>
