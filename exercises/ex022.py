@@ -85,9 +85,17 @@ def run_tests():
             return f"❌ `reminders` 清單內容不正確。\n\n[預期應該是]：\n{expected_reminders}\n\n[你的答案是]：\n{global_env['reminders']}"
             
         # 3. 檢查最後一行的輸出是否包含印出的 reminders
-        if str(expected_reminders) != actual_lines[-1] and str(expected_reminders).replace("'", '"') != actual_lines[-1]:
-             # Handle potential single/double quote representation differences
-             pass
+        expected_str1 = str(expected_reminders)
+        expected_str2 = expected_str1.replace("'", '"')
+
+        if not actual_lines:
+            return "❌ 找不到任何輸出，請確保有使用 `print()` 函式印出結果。"
+
+        if actual_lines[-1] not in (expected_str1, expected_str2):
+            if actual_lines[-1] == expected_for_output[-1]:
+                return "❌ 任務失敗！你好像只有完成前半部的迴圈輸出。請記得在最後面加上 `print(reminders)` 印出清單。"
+            else:
+                return f"❌ 任務失敗！最後一行的輸出不是預期的 `reminders` 清單。\n\n[預期應該是]：\n{expected_reminders}\n\n[你的答案是]：\n{actual_lines[-1]}"
         
     except Exception as e:
         return f"❌ 執行錯誤：{str(e)}"
