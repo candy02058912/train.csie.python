@@ -1,15 +1,17 @@
 """
-title: 練習題 026：in 運算子
+title: 練習題 026：飲料杯數統計
 score: 1
-quest_html: 在 Python 裡，我們常常需要檢查某個東西「有沒有在」清單或字典裡面。<br>這時候 <b><code>in</code></b> 這個關鍵字非常好用！對於字典來說，它會去檢查 <b>key</b> 是否存在於字典中。<br><br><b>任務需求：</b><br>1. 我們有一份 <code>menu</code> 字典，以及客人點的飲料 <code>order</code>。<br>2. 請使用 <b><code>if</code> / <code>else</code></b> 搭配 <b><code>in</code></b> 運算子來檢查 <code>order</code> 是否存在於 <code>menu</code> 中。<br>3. <b>如果存在：</b>請印出 <code-snippet>您的飲料是 {價格} 元</code-snippet> (價格請從字典中讀取)<br>4. <b>如果不存在：</b>請印出 <code-snippet>抱歉，我們沒有賣 {order}</code-snippet>
+quest_html: 在進入更複雜的點單系統之前，吧台需要先學會如何統計每一種飲料的需求量。我們有一個只包含飲料名稱的清單 <code>drinks</code>，請使用字典 (Dict) 幫忙統計每種飲料各有幾杯。<br><br><b>任務需求：</b><br>1. 準備一個空字典 <code>counts</code> 用來裝統計結果。<br>2. 用 <b><code>for</code> 迴圈</b> 逐一把 <code>drinks</code> 裡面的飲料拿出來。<br>3. 在迴圈內，檢查該飲料有沒有在字典裡（<b>提示：你可以使用 <code>in</code> 來檢查</b>）。如果沒有，就設為 1 杯；如果已經有了，就加 1 杯。<br>4. 迴圈結束後，印出 <code>counts</code> 字典，預期會看到：<code-snippet>{'珍珠奶茶': 4, '四季春': 2, '紅茶': 1, '烏龍奶': 2}</code-snippet>
 """
 
 # ==== STARTER CODE ====
-menu = {"紅茶": 30, "綠茶": 30, "珍奶": 50}
-order = "烏龍茶"
+drinks = [
+    "珍珠奶茶", "四季春", "珍珠奶茶",
+    "烏龍奶", "紅茶", "珍珠奶茶", "烏龍奶",
+    "四季春", "珍珠奶茶"
+]
 
-# 請在下方寫下你的 if / else 判斷
-
+# 請在下方開始編寫你的程式碼
 
 
 # ==== TEST CODE ====
@@ -20,24 +22,30 @@ def run_tests():
         return "❌ 系統錯誤：無法讀取你的程式碼。"
         
     try:
-        # [防作弊機制]：使用 AST (語法樹) 檢查
+        # [防作弊機制]：使用 AST 檢查
         tree = ast.parse(studentCode)
-        has_if = False
+        has_dict_init = False
+        has_for = False
         has_in = False
         
         for node in ast.walk(tree):
-            if isinstance(node, ast.If):
-                has_if = True
+            if isinstance(node, ast.For):
+                has_for = True
+            if isinstance(node, ast.Assign):
+                if isinstance(node.value, ast.Dict):
+                    has_dict_init = True
             if isinstance(node, ast.Compare):
                 # 檢查是否有用到 In 或是 NotIn 運算子
                 for op in node.ops:
                     if isinstance(op, (ast.In, ast.NotIn)):
                         has_in = True
 
-        if not has_if:
-            return "❌ 任務失敗！你必須使用 `if / else` 來進行判斷。"
+        if not has_dict_init:
+            return "❌ 任務失敗！你必須宣告一個空字典來收集統計資料 (例如 `counts = {}`)。"
+        if not has_for:
+            return "❌ 任務失敗！你需要用一個 `for` 迴圈來處理 drinks 清單喔！"
         if not has_in:
-            return "❌ 任務失敗！這一題需要你練習使用 `in` 運算子來檢查 key 是否存在喔！"
+            return "❌ 任務失敗！建議使用 `in` 運算子來檢查飲料是否已經存在於字典中。"
             
     except SyntaxError as e:
         return f"❌ 語法錯誤：{str(e)}"
@@ -45,50 +53,50 @@ def run_tests():
     import io
     import contextlib
 
-    import re
-    # 準備執行環境模板
-    def test_with_order(test_order):
-        if isinstance(__builtins__, dict):
-            builtins_dict = __builtins__.copy()
-        else:
-            import builtins
-            builtins_dict = vars(builtins).copy()
+    # 準備執行環境
+    if isinstance(__builtins__, dict):
+        builtins_dict = __builtins__.copy()
+    else:
+        import builtins
+        builtins_dict = vars(builtins).copy()
 
-        global_env = {
-            '__builtins__': builtins_dict,
-            'print': print,
-            'menu': {"紅茶": 30, "綠茶": 30, "珍奶": 50}
-        }
-        output = io.StringIO()
+    global_env = {
+        '__builtins__': builtins_dict,
+        'print': print,
+        'drinks': ["珍珠奶茶", "四季春", "珍珠奶茶", "烏龍奶", "紅茶", "珍珠奶茶", "烏龍奶", "四季春", "珍珠奶茶"]
+    }
+    output = io.StringIO()
+    
+    try:
+        with contextlib.redirect_stdout(output):
+            exec(studentCode, global_env)
         
-        # 動態將 studentCode 內的 order = "烏龍茶" 抽換成指定測試字串
-        modified_code = re.sub(r'order\s*=\s*([\'"]).*?\1', f'order = "{test_order}"', studentCode, count=1)
+        captured = output.getvalue().strip()
+        actual_lines = [line.strip() for line in captured.split("\n") if line.strip()]
         
+        expected_dict = {'珍珠奶茶': 4, '四季春': 2, '烏龍奶': 2, '紅茶': 1}
+        
+        # Check dictionary state
+        if "counts" not in global_env:
+            return "❌ 找不到變數 `counts`，請確認你有宣告 `counts = {}`。"
+            
+        if global_env["counts"] != expected_dict:
+            return f"❌ `counts` 統計結果不正確。\n\n[預計出來的字典內容]：\n{expected_dict}\n\n[你算出來的結果]：\n{global_env['counts']}"
+            
+        # Verify the actual formatted output
+        if not actual_lines:
+            return "❌ 找不到任何輸出，請確保在迴圈外面有使用 `print(counts)` 印出結果。"
+            
+        # just check if output matches string representation (order might not matter in Py3.7+ but dict string format does)
+        # the simplest way is to check eval
         try:
-            with contextlib.redirect_stdout(output):
-                exec(modified_code, global_env)
-            return output.getvalue().strip()
-        except Exception as e:
-            return f"❌ 執行錯誤：{str(e)}"
-    
-    # 測試情境 1: 預設的 烏龍茶 (不存在)
-    res1 = test_with_order("烏龍茶")
-    if res1.startswith("❌"): return res1
-    
-    actual_lines1 = [line.strip() for line in res1.split("\n") if line.strip()]
-    if len(actual_lines1) == 0:
-        return "❌ 測試失敗：當 order 是 '烏龍茶' 時，你沒有印出任何東西！"
-    if actual_lines1[-1] != "抱歉，我們沒有賣 烏龍茶":
-        return f"❌ 測試失敗：當 order 是 '烏龍茶' (不在菜單內) 時，輸出不正確。\n\n[預期應該是]：\n抱歉，我們沒有賣 烏龍茶\n\n[你的答案是]：\n{actual_lines1[-1]}"
-        
-    # 測試情境 2: 改變為 珍奶 (存在)
-    res2 = test_with_order("珍奶")
-    if res2.startswith("❌"): return res2
-    
-    actual_lines2 = [line.strip() for line in res2.split("\n") if line.strip()]
-    if len(actual_lines2) == 0:
-        return "❌ 測試失敗：當 order 變成菜單上有的東西時，你的程式碼沒有輸出！請確保不是把答案寫死了。"
-    if actual_lines2[-1] != "您的飲料是 50 元":
-        return f"❌ 測試失敗：當系統把 order 改成 '珍奶' 測試時，輸出不正確。\n這代表你的程式碼可能沒有正確從字典裡抓取對應的價格喔！\n\n[預期應該是]：\n您的飲料是 50 元\n\n[你的答案是]：\n{actual_lines2[-1]}"
-
+            student_output_dict = ast.literal_eval(actual_lines[-1])
+            if student_output_dict != expected_dict:
+                return f"❌ 最後一行的輸出不是預期的字典內容。\n\n[預期應該是]：\n{expected_dict}\n\n[你的答案是]：\n{actual_lines[-1]}"
+        except:
+             return f"❌ 最後一行的輸出格式錯誤，請確保你直接印出整個 counts 字典 (例如 `print(counts)`)。\n[你的答案是]：\n{actual_lines[-1]}"
+            
+    except Exception as e:
+        return f"❌ 執行錯誤：{str(e)}"
+            
     return "SUCCESS"
