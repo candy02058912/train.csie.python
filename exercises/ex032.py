@@ -1,7 +1,7 @@
 """
 title: 練習題 032：結帳收銀機
 score: 1
-quest_html: 飲料店在結帳時，系統需要同時算出「原價」與「打九折後的折扣價」。在 Python 中，我們只要在 <code>return</code> 後面用逗號隔開多個變數，就能一次把答案都給出去！呼叫時也可以用多個變數來接收，這稱為<b>解包 (Unpacking)</b>。<br><br><b>任務需求：</b><br>1. 定義函式 <code>calculate_price</code>，接收兩個參數：<code>price</code> (單價) 與 <code>count</code> (數量)。<br>2. 函式內部：<br>   - 算出原價 (price * count)，存入變數 <code>total</code>。<br>   - 算出九折價 (total * 0.9)，存入變數 <code>discount</code>。<br>   - 使用 <code>return</code> 同時回傳這兩個數值（用逗號隔開）。<br>3. 在函式的<b>外面</b>，呼叫 <code>calculate_price(50, 3)</code> 並使用兩個變數同時接收回傳值（解包）。<br>4. 使用 <code>print()</code> 印出這兩個變數，預期會看到：<code-snippet>150 135.0</code-snippet>
+quest_html: 飲料店在結帳時，系統需要同時算出「原價」與「打九折後的折扣價」。在 Python 中，我們只要在 <code>return</code> 後面用逗號隔開多個變數，就能一次把答案都給出去！呼叫時也可以用多個變數來接收。<br><br><b>任務需求：</b><br>1. 定義函式 <code>calculate_price</code>，接收兩個參數：<code>price</code> (單價) 與 <code>count</code> (數量)。<br>2. 函式內部：<br>   - 算出原價 (price * count)，存入變數 <code>total</code>。<br>   - 算出九折價 (total * 0.9)，存入變數 <code>discount</code>。<br>   - 使用 <code>return</code> 同時回傳這兩個數值（用逗號隔開）。<br>3. 在函式的<b>外面</b>，呼叫 <code>calculate_price(50, 3)</code> 並使用兩個變數同時接收回傳值。<br>4. 使用 <code>print()</code> 印出這兩個變數，預期會看到：<code-snippet>150 135.0</code-snippet>
 """
 
 # ==== STARTER CODE ====
@@ -50,7 +50,7 @@ def run_tests():
         if not has_multi_return:
             return "❌ 任務失敗！函式內部必須使用 `return a, b` 的格式同時回傳兩個數值。"
         if not has_unpacking:
-            return "❌ 任務失敗！呼叫函式時，請練習使用 `x, y = ...` 的解包語法來接收多個回傳值。"
+            return "❌ 任務失敗！呼叫函式時，請練習使用 `x, y = ...` 的語法來接收多個回傳值。"
             
     except SyntaxError as e:
         return f"❌ 語法錯誤：{str(e)}"
