@@ -17,25 +17,41 @@ MENU_FILE = "menu.py"
 EXERCISE_ID = "cafe_import"
 GAS_URL = "https://script.google.com/macros/s/AKfycbwao2BkgYeb9TgQsdnKs3cnzKfsyloH1WC2BQHBh3ru8L3qxosQ-T6ZOApkWVDSuBuaeg/exec"
 MENU_DOWNLOAD_URL = "https://py.candys.page/menu.py"
+CAFE_DOWNLOAD_URL = "https://py.candys.page/cafe.py"
 
 
-def download_menu_if_missing():
-    """如果沒有 menu.py，自動從 GitHub 下載"""
-    if os.path.exists(MENU_FILE):
-        return
+def download_file_if_missing(filename: str, url: str) -> bool:
+    """自動從給定的網址下載檔案，如果已下載新檔案則回傳 True"""
+    if os.path.exists(filename):
+        return False
         
-    print(f"📦 偵測到缺少 {MENU_FILE}，這是正常的，正在為你自動從雲端下載...")
+    print(f"📦 偵測到缺少 {filename}，正在為你自動從雲端下載...")
     try:
-        req = urllib.request.Request(MENU_DOWNLOAD_URL, headers={'User-Agent': 'Mozilla/5.0'})
+        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
         with urllib.request.urlopen(req, timeout=10) as resp:
             content = resp.read().decode('utf-8')
-            with open(MENU_FILE, 'w', encoding='utf-8') as f:
+            with open(filename, 'w', encoding='utf-8') as f:
                 f.write(content)
-        print(f"✅ 成功下載 {MENU_FILE}！")
+        print(f"✅ 成功下載 {filename}！")
+        return True
     except Exception as e:
-        print(f"❌ 自動下載 {MENU_FILE} 失敗：{e}")
-        print(f"   請確定網路連線正常，或手動從 {MENU_DOWNLOAD_URL} 下載並命名為 menu.py")
+        print(f"❌ 自動下載 {filename} 失敗：{e}")
+        print(f"   請確定網路連線正常，或手動從 {url} 下載並命名為 {filename}")
         sys.exit(1)
+
+
+def setup_environment():
+    """檢查並下載所需檔案，如果有下載任何新檔案，則提示學生開始作答並結束程式"""
+    downloaded_cafe = download_file_if_missing(TARGET_FILE, CAFE_DOWNLOAD_URL)
+    downloaded_menu = download_file_if_missing(MENU_FILE, MENU_DOWNLOAD_URL)
+    
+    if downloaded_cafe or downloaded_menu:
+        print("\n" + "=" * 50)
+        print("🎉 環境準備完成！")
+        print(f"   請打開資料夾中的 `{TARGET_FILE}`，依照裡面的註解完成任務。")
+        print("   修改並存檔完畢後，再重新執行一次這個指令！")
+        print("=" * 50)
+        sys.exit(0)
 
 
 # ── 工具函式 ──────────────────────────────────────
@@ -159,7 +175,7 @@ def main():
     print("=" * 50)
 
     # 0. 下載所需檔案並讀取原始碼
-    download_menu_if_missing()
+    setup_environment()
     
     # 確保 sys.path 包含當前目錄以供載入
     current_dir = os.path.abspath(os.path.dirname(__file__))
