@@ -1,7 +1,7 @@
 """
 title: 練習題 031：快速點餐系統
 score: 1
-quest_html: 吧台很忙，如果客人在點單時沒特別說甜度和冰塊，我們就預設給「全糖 / 正常冰」。在 Python 中，我們可以在定義函式時為參數設定<b>預設值 (Default Parameters)</b>，這樣呼叫時就可以少打一點字囉！<br><br><b>任務需求：</b><br>1. 定義函式 <code>quick_order</code>，接收三個參數：<code>name</code>, <code>sugar</code>, <code>ice</code>。<br>2. 為參數設定預設值：<code>sugar</code> 預設為 <code>"全糖"</code>，<code>ice</code> 預設為 <code>"正常冰"</code>。<br>3. 函式內部：使用 <code>return</code> 回傳如下格式的字串：<br><code-snippet>已下單：{name} ({sugar}/{ice})</code-snippet><br>4. 在函式外面，參考 Starter Code 的測試程式碼印出結果。
+quest_html: 吧台很忙，如果客人在點單時沒特別說甜度和冰塊，我們就預設給「全糖 / 正常冰」。在 Python 中，我們可以在定義函式時為參數設定<b>預設值 (Default Parameters)</b>，這樣呼叫時就可以少打一點字囉！<br><br><b>任務需求：</b><br>1. 定義函式 <code>quick_order</code>，接收三個參數：<code>name</code>, <code>sugar</code>, <code>ice</code>。<br>2. 為參數設定預設值：<code>sugar</code> 預設為 <code>"全糖"</code>，<code>ice</code> 預設為 <code>"正常冰"</code>。<br>3. 函式內部：使用 <code>return</code> 回傳如下格式的字串：<br><code-snippet>已下單：{name} ({sugar}/{ice})</code-snippet>
 """
 
 # ==== STARTER CODE ====
